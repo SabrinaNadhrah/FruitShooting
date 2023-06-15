@@ -22,7 +22,7 @@ void initializeFruits(Fruit* fruits[]) {
         }
         
         fruits[i]->setX(rand() % (screenWidth - fruitWidth)); // Random x position
-        fruits[i]->setY(rand() % (screenHeight / 2)); // Random y position within the top half of the screen
+        fruits[i]->setY(rand() % (screenHeight / 4)); // Random y position within the top half of the screen
     }
 }
 
