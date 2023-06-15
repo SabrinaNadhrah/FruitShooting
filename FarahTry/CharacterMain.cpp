@@ -12,6 +12,7 @@ int main()
     int screenHeight = getmaxheight();
     
     initwindow(screenWidth, screenHeight, "Fruit Shooting Character part");
+    setbkcolor(WHITE); // Set the background color to white
 
     void* background;
     int imageWidth = screenWidth;
@@ -19,10 +20,7 @@ int main()
     int size = imagesize(0, 0, imageWidth, imageHeight);
     background = new char[size];
 
-    // Load the image from the file and scale it to full screen
-    string imageFile = "forest.jpg";
-    readimagefile(imageFile.c_str(), 0, 0, screenWidth, screenHeight);
-    getimage(0, 0, imageWidth - 1, imageHeight - 1, background);
+    
 
     int character2X = screenWidth / 2 + 100;// start at the middle of screen
     int character2Y = screenHeight - 230; 
@@ -32,11 +30,9 @@ int main()
     while (!kbhit())
     {
         setactivepage(1);
-        //cleardevice();
+        cleardevice();
 
-        // Draw background
-        putimage(0, 0, background, COPY_PUT);
-
+        
         // Update character 2 position
         character2.moveRight();
         if (character2.getPosition() >= screenWidth)
