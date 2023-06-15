@@ -2,6 +2,10 @@
 #include <string>
 #include "Character.h"
 #include "ImpleCharacter.cpp"
+#include "weapon.cpp"
+#include "weapon.h"
+#include "bullet.h"
+#include "bullet.cpp"
 
 
 using namespace std;
@@ -27,6 +31,11 @@ int main()
 
     Character character2("Player", character2X, character2Y);
 
+    Weapon w1(screenWidth/2, screenHeight-100);
+	char ch;
+
+
+    int direction = 1 ;
     while (!kbhit())
     {
         setactivepage(1);
@@ -43,7 +52,32 @@ int main()
 
         setvisualpage(1);
 
-        delay(50);
+        
+        // Move the weapon
+        w1.move(5 * direction);
+
+        // Reverse direction if the weapon reaches the screen boundaries
+        if (w1.getPosition() <= 0 || w1.getPosition() >= (screenWidth - 155) )
+            direction *= -1;
+
+		w1.doAction();
+
+		if (kbhit())
+		{
+			ch = getch();
+
+			if (ch == 27)
+				break;
+			else if (ch == ' ')
+				w1.shoot();
+		}
+
+        // Redraw the weapon
+        cleardevice();
+        w1.update();
+        w1.draw();
+
+        delay(40);
     }
 
     closegraph();
