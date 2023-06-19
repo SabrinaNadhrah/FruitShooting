@@ -1,27 +1,26 @@
 #ifndef OBSTACLE_H
 #define OBSTACLE_H
 
+#include <string>
 #include <graphics.h>
-#include <cmath>
 
 class Obstacle {
 private:
-    int color;
-    int dx;
-    int dy;
-    int radius;
-    int x;
-    int y;
+    std::string obstacleName;
+    int positionX;
+    int positionY;
+    int width;
+    int height;
 
 public:
-    Obstacle(int _color = WHITE, int _dx = 0, int _dy = 0, int _radius = 0, int _x = 0, int _y = 0);
-    void setMovement(int _dx, int _dy);
-    void reverseHorizontal();
-    void draw() const;
-    void undraw() const;
-    void shift();
-    void move();
+    Obstacle(const std::string& obstacleName, int obstaclePositionX, int obstaclePositionY, int obstacleWidth, int obstacleHeight);
+    void drawObstacle() const;
+    void undrawObstacle() const;
+    void moveLeft();
+    void moveRight();
+    int getPosition() const;
+    void setPosition(int x);
+    int getY() const;
 };
 
-#endif
-
+#endif // OBSTACLE_H
