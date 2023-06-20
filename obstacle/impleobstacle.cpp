@@ -5,11 +5,11 @@ Obstacle::Obstacle(const std::string& obstacleName, int obstaclePositionX, int o
     : obstacleName(obstacleName), positionX(obstaclePositionX), positionY(obstaclePositionY), width(obstacleWidth), height(obstacleHeight) {}
 
 void Obstacle::moveLeft() {
-    positionX -= 5;
+    positionX -= 10;
 }
 
 void Obstacle::moveRight() {
-    positionX += 5;
+    positionX += 10;
 }
 
 int Obstacle::getPosition() const {

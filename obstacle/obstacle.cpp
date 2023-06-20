@@ -42,8 +42,9 @@ int main()
         obstacle2.drawObstacle();
 
         setvisualpage(1);
+        setvisualpage(0);
 
-        delay(100);
+        delay(20);
     }
 
     closegraph();
