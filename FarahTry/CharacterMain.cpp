@@ -65,6 +65,10 @@ int main()
     int size = imagesize(0, 0, imageWidth, imageHeight);
     background = new char[size];
 
+    // Load the image from the file and scale it to full screen
+    readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
+    getimage(0, 0, imageWidth - 1, imageHeight - 1, background);
+
     int character2X = screenWidth / 2; // start at the middle of screen
     int character2Y = screenHeight - 230;
     int character1X = screenWidth / 2; // start at the middle of screen
@@ -80,23 +84,20 @@ int main()
 
     while (true)
     {
-        delay(40);
-        setactivepage(1);
+        //delay(40);
         cleardevice();
-        character3.moveLeft();
-        // Update character 2 position
-        character2.moveRight();
-        if (character2.getPosition() == screenWidth)
-            character2.moveLeft();
-       
+        setactivepage(1);
 
-        // Draw character 2 at the updated position
+        // Move the characters
+        character2.moveRight();
+        character3.moveLeft();
+
+        // Draw the characters
         character2.drawCharacter();
         character3.drawCharacter();
-        setvisualpage(1);
 
         // Move the weapon
-        w1.move(5* direction);
+        w1.move(5 * direction);
 
         // Reverse direction if the weapon reaches the screen boundaries
         if (w1.getPosition() <= 0 || w1.getPosition() >= (screenWidth - 155))
@@ -106,7 +107,6 @@ int main()
 
         if (kbhit())
         {
-
             ch = getch();
 
             if (ch == 27)
@@ -115,10 +115,15 @@ int main()
                 w1.shoot();
         }
 
+        // Draw the background image
+        putimage(0, 0, background, COPY_PUT);
+
         // Redraw the weapon
-        cleardevice();
         w1.update();
         w1.draw();
+
+        setvisualpage(1);
+        delay(100);
     }
 
     closegraph();
