@@ -1,58 +1,52 @@
-#include "obstacle.h"
 #include <graphics.h>
+#include <string>
 #include "obstacle.h"
+#include "impleobstacle.cpp"
 
-Obstacle::Obstacle(int _color, int _dx, int _dy, int _radius, int _x, int _y)
-    : color(_color), dx(_dx), dy(_dy), radius(_radius), x(_x), y(_y) {}
+int main()
+{
+    int screenWidth = 800; // Adjust with your desired screen width
+    int screenHeight = 600; // Adjust with your desired screen height
 
-void Obstacle::setMovement(int _dx, int _dy) {
-    dx = _dx;
-    dy = _dy;
-}
+    initwindow(screenWidth, screenHeight, "Obstacle Game");
 
-void Obstacle::reverseHorizontal() {
-    dx = -dx;
-}
+    setbkcolor(WHITE); // Set background color to white
 
-void Obstacle::draw() const {
-    setfillstyle(SOLID_FILL, color);
-    setcolor(color);
-    fillellipse(x, y, radius, radius);
-}
+    int obstacleWidth = 100; // Adjust with the actual width of your obstacle image
+    int obstacleHeight = 100; // Adjust with the actual height of your obstacle image
 
-void Obstacle::undraw() const {
-    setfillstyle(SOLID_FILL, BLACK);
-    setcolor(BLACK);
-    fillellipse(x, y, radius, radius);
-}
+    int obstacle1X = screenWidth / 2 - obstacleWidth / 2; // start at the middle of the screen
+    int obstacle1Y = screenHeight / 2 - obstacleHeight / 2;
 
-void Obstacle::shift() {
-    x += dx;
-    y += dy;
-}
+    int obstacle2X = screenWidth / 2 - obstacleWidth / 2; // start at the middle of the screen
+    int obstacle2Y = screenHeight / 2 - obstacleHeight / 2 - 100; // adjust the obstacle's Y position above the first obstacle
 
-void Obstacle::move() {
-    undraw();
-    shift();
-    draw();
-}
+    Obstacle obstacle1("Obstacle1", obstacle1X, obstacle1Y, obstacleWidth, obstacleHeight);
+    Obstacle obstacle2("Obstacle2", obstacle2X, obstacle2Y, obstacleWidth, obstacleHeight);
 
-int main() {
-    int screenWidth = getmaxwidth();
-    int screenHeight = getmaxheight();
+    while (!kbhit())
+    {
+        setactivepage(1);
+        cleardevice(); // Clear the screen
 
-    initwindow(screenWidth, screenHeight, "Obstacle Demo");
+        obstacle1.undrawObstacle(); // Undraw the obstacle before moving
+        obstacle1.moveRight();
+        if (obstacle1.getPosition() >= screenWidth - obstacleWidth)
+            obstacle1.setPosition(0);
+        obstacle1.drawObstacle();
 
-    Obstacle obstacle1(WHITE, 5, 0, 25, 0, screenHeight / 2);
-    Obstacle obstacle2(WHITE, -5, 0, 25, screenWidth, screenHeight / 2);
+        obstacle2.undrawObstacle(); // Undraw the obstacle before moving
+        obstacle2.moveLeft();
+        if (obstacle2.getPosition() <= 0)
+            obstacle2.setPosition(screenWidth - obstacleWidth);
+        obstacle2.drawObstacle();
 
-    while (!kbhit()) {
-        obstacle1.move();
-        obstacle2.move();
-        delay(3);
+        setvisualpage(1);
+        setvisualpage(0);
+
+        delay(20);
     }
 
     closegraph();
     return 0;
 }
-
