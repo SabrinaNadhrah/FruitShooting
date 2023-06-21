@@ -80,18 +80,28 @@ int main()
 
     while (true)
     {
-        delay(40);
+        delay(200);
         setactivepage(1);
         cleardevice();
-        character3.moveLeft();
         // Update character 2 position
-        character2.moveRight();
-        if (character2.getPosition() == screenWidth)
-            character2.moveLeft();
        
+        if (character2.getPosition() >= screenWidth){
+            character2.moveLeft();
+            character2.drawCharacter();}
+        else{
+            character2.moveRight();
+            character2.drawCharacter();
+        }
 
+         if (character3.getPosition() >= screenWidth)
+            character3.moveRight();
+            
+        else {
+            character3.moveLeft();
+            
+        }
         // Draw character 2 at the updated position
-        character2.drawCharacter();
+        
         character3.drawCharacter();
         setvisualpage(1);
 
