@@ -59,7 +59,7 @@ int main()
     initwindow(screenWidth, screenHeight, "Fruit Shooting Character part");
     setbkcolor(WHITE); // Set the background color to white
 
-    void *background;
+    void* background;
     int imageWidth = screenWidth;
     int imageHeight = screenHeight;
     int size = imagesize(0, 0, imageWidth, imageHeight);
@@ -85,7 +85,7 @@ int main()
     // Create double buffer image
     int bufferWidth = screenWidth + 1;
     int bufferHeight = screenHeight + 1;
-    void *buffer = new char[imagesize(0, 0, bufferWidth, bufferHeight)];
+    void* buffer = new char[imagesize(0, 0, bufferWidth, bufferHeight)];
 
     while (true)
     {
@@ -102,6 +102,10 @@ int main()
         if (w1.getPosition() <= 0 || w1.getPosition() >= (screenWidth - 155))
             direction *= -1;
 
+        // Update and draw the bullet
+        w1.update();
+        w1.draw();
+
         // Draw on the off-screen buffer
         setactivepage(0);
         setvisualpage(1);
@@ -112,10 +116,6 @@ int main()
         // Draw the characters
         character2.drawCharacter();
         character3.drawCharacter();
-
-        // Draw the weapon
-        w1.update();
-        w1.draw();
 
         // Swap the buffers to display the complete frame
         swapbuffers();
@@ -131,10 +131,12 @@ int main()
                 w1.shoot();
         }
 
-        //delay(100);
+        delay(100);
     }
-    delay(100);
+
     closegraph();
-    delete[] static_cast<char *>(buffer);
+    delete[] static_cast<char*>(buffer);
     return 0;
 }
+
+
