@@ -1,13 +1,10 @@
 #include <graphics.h>
-#include <string>
-#include "Character.h"
-#include "ImpleCharacter.cpp"
-#include "weapon.cpp"
 #include "weapon.h"
 #include "bullet.h"
-#include "bullet.cpp"
+#include "Player1.h"
+#include "Player2.h"
 
-using namespace std;
+
 
 void displayMenu()
 {
@@ -65,13 +62,13 @@ int main()
     int size = imagesize(0, 0, imageWidth, imageHeight);
     background = new char[size];
 
-    int character2X = screenWidth / 2; // start at the middle of screen
+    int character2X = screenWidth / 2; // start at the middle of the screen
     int character2Y = screenHeight - 230;
-    int character1X = screenWidth / 2; // start at the middle of screen
+    int character1X = screenWidth / 2; // start at the middle of the screen
     int character1Y = screenHeight - 230;
 
-    Character character2("Player", character2X, character2Y);
-    Character character3("Player2", character1X, character1Y);
+    Player1 player1("Player1", character2X, character2Y);
+    Player2 player2("Player2", character1X, character1Y);
 
     Weapon w1(screenWidth / 2, screenHeight - 100);
     char ch;
@@ -83,30 +80,29 @@ int main()
         delay(40);
         setactivepage(1);
         cleardevice();
-        
-        // Update character 2 position
-       
-        if (character2.getPosition() >= screenWidth)
-           { character2.moveLeft();
-            character2.drawCharacter();}
+
+        // Update player 1 position
+        if (player1.getPosition() >= screenWidth)
+            player1.moveLeft();
         else
-            {character2.moveRight();
-            character2.drawCharacter();}
+            player1.moveRight();
 
+        // Update player 2 position
+        if (player2.getPosition() <= 0)
+            player2.moveRight();
+        else
+            player2.moveLeft();
 
-         if (character3.getPosition() <= 0){
-            character3.moveRight();
-            character3.drawCharacter();}
+        // Draw player 1 at the updated position
+        player1.drawCharacter();
 
-        else{
-            character3.moveLeft();
-            character3.drawCharacter();}
-        // Draw character 2 at the updated position
-        
+        // Draw player 2 at the updated position
+        player2.drawCharacter();
+
         setvisualpage(1);
 
         // Move the weapon
-        w1.move(5* direction);
+        w1.move(5 * direction);
 
         // Reverse direction if the weapon reaches the screen boundaries
         if (w1.getPosition() <= 0 || w1.getPosition() >= (screenWidth - 155))
@@ -116,7 +112,6 @@ int main()
 
         if (kbhit())
         {
-
             ch = getch();
 
             if (ch == 27)
