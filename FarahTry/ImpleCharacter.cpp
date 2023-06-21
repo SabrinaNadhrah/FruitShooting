@@ -11,7 +11,7 @@ void Character::moveLeft() {
 }
 
 void Character::moveRight() {
-    positionX += 10;
+    positionX += 5;
 }
 
 int Character::getPosition() const {

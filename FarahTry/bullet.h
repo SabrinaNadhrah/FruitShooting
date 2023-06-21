@@ -1,7 +1,7 @@
 #ifndef BULLET_H
 #define BULLET_H
 
-#include <graphics.h>
+//#include <graphics.h>
 #include "weapon.h"
 
 class Weapon;
