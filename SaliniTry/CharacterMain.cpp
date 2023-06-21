@@ -65,6 +65,10 @@ int main()
     int size = imagesize(0, 0, imageWidth, imageHeight);
     background = new char[size];
 
+    // Load the image from the file and scale it to full screen
+    readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
+    getimage(0, 0, imageWidth - 1, imageHeight - 1, background);
+
     int character2X = screenWidth / 2; // start at the middle of screen
     int character2Y = screenHeight - 230;
     int character1X = screenWidth / 2; // start at the middle of screen
@@ -80,33 +84,45 @@ int main()
 
     while (true)
     {
-        delay(40);
+<<<<<<< HEAD
+        delay(200);
         setactivepage(1);
         cleardevice();
-        
         // Update character 2 position
        
-        if (character2.getPosition() >= screenWidth)
-           { character2.moveLeft();
+        if (character2.getPosition() >= screenWidth){
+            character2.moveLeft();
             character2.drawCharacter();}
-        else
-            {character2.moveRight();
-            character2.drawCharacter();}
-
-
-         if (character3.getPosition() <= 0){
-            character3.moveRight();
-            character3.drawCharacter();}
-
         else{
+            character2.moveRight();
+            character2.drawCharacter();
+        }
+
+         if (character3.getPosition() >= screenWidth)
+            character3.moveRight();
+            
+        else {
             character3.moveLeft();
-            character3.drawCharacter();}
+            
+        }
         // Draw character 2 at the updated position
         
-        setvisualpage(1);
+=======
+        //delay(40);
+        cleardevice();
+        setactivepage(1);
+
+        // Move the characters
+        character2.moveRight();
+        character3.moveLeft();
+
+        // Draw the characters
+        character2.drawCharacter();
+>>>>>>> 71a349187ab3249542f005041c491b9c9d0a07d4
+        character3.drawCharacter();
 
         // Move the weapon
-        w1.move(5* direction);
+        w1.move(5 * direction);
 
         // Reverse direction if the weapon reaches the screen boundaries
         if (w1.getPosition() <= 0 || w1.getPosition() >= (screenWidth - 155))
@@ -116,7 +132,6 @@ int main()
 
         if (kbhit())
         {
-
             ch = getch();
 
             if (ch == 27)
@@ -125,10 +140,15 @@ int main()
                 w1.shoot();
         }
 
+        // Draw the background image
+        putimage(0, 0, background, COPY_PUT);
+
         // Redraw the weapon
-        cleardevice();
         w1.update();
         w1.draw();
+
+        setvisualpage(1);
+        delay(100);
     }
 
     closegraph();
