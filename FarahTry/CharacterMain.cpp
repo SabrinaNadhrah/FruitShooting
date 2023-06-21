@@ -84,6 +84,30 @@ int main()
 
     while (true)
     {
+<<<<<<< HEAD
+        delay(200);
+        setactivepage(1);
+        cleardevice();
+        // Update character 2 position
+       
+        if (character2.getPosition() >= screenWidth){
+            character2.moveLeft();
+            character2.drawCharacter();}
+        else{
+            character2.moveRight();
+            character2.drawCharacter();
+        }
+
+         if (character3.getPosition() >= screenWidth)
+            character3.moveRight();
+            
+        else {
+            character3.moveLeft();
+            
+        }
+        // Draw character 2 at the updated position
+        
+=======
         //delay(40);
         cleardevice();
         setactivepage(1);
@@ -94,6 +118,7 @@ int main()
 
         // Draw the characters
         character2.drawCharacter();
+>>>>>>> 71a349187ab3249542f005041c491b9c9d0a07d4
         character3.drawCharacter();
 
         // Move the weapon
