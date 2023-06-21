@@ -82,19 +82,18 @@ int main()
 
     int direction = 1;
 
+    // Create double buffer image
+    int bufferWidth = screenWidth + 1;
+    int bufferHeight = screenHeight + 1;
+    void *buffer = new char[imagesize(0, 0, bufferWidth, bufferHeight)];
+
     while (true)
     {
-        //delay(40);
         cleardevice();
-        setactivepage(1);
 
         // Move the characters
         character2.moveRight();
         character3.moveLeft();
-
-        // Draw the characters
-        character2.drawCharacter();
-        character3.drawCharacter();
 
         // Move the weapon
         w1.move(5 * direction);
@@ -103,8 +102,25 @@ int main()
         if (w1.getPosition() <= 0 || w1.getPosition() >= (screenWidth - 155))
             direction *= -1;
 
-        w1.doAction();
+        // Draw on the off-screen buffer
+        setactivepage(0);
+        setvisualpage(1);
 
+        // Draw the background image
+        putimage(0, 0, background, COPY_PUT);
+
+        // Draw the characters
+        character2.drawCharacter();
+        character3.drawCharacter();
+
+        // Draw the weapon
+        w1.update();
+        w1.draw();
+
+        // Swap the buffers to display the complete frame
+        swapbuffers();
+
+        // Handle user input
         if (kbhit())
         {
             ch = getch();
@@ -115,17 +131,10 @@ int main()
                 w1.shoot();
         }
 
-        // Draw the background image
-        putimage(0, 0, background, COPY_PUT);
-
-        // Redraw the weapon
-        w1.update();
-        w1.draw();
-
-        setvisualpage(1);
-        delay(100);
+        //delay(100);
     }
-
+    delay(100);
     closegraph();
+    delete[] static_cast<char *>(buffer);
     return 0;
 }
