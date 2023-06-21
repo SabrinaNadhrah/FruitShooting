@@ -1,0 +1,39 @@
+{
+    "configurations": [
+        {
+            "name": "MinGW",
+            "intelliSenseMode": "windows-gcc-x86",
+            "compilerPath": "C:/MinGW/bin/gcc.exe",
+            "includePath": [
+                "${workspaceFolder}",
+                "C:/MinGW/lib/gcc/i686-w64-mingw32/8.1.0/include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODES"
+            ],
+            "browse": {
+                "path": [
+                    "C:/MinGW/lib/gcc/i686-w64-mingw32/8.1.0/include",
+                    "C:/MinGW/lib/gcc/i686-w64-mingw32/8.1.0/include-fixed",
+                    "C:/MinGW/include/*",
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            },
+            "cStandard": "c17",
+            "cppStandard": "c++11",
+            "compilerArgs": [
+                "-lbgi",
+                "-lgdi32",
+                "-lcomdlg32",
+                "-luuid",
+                "-loleaut32",
+                "-lole32"
+            ]
+        }
+    ],
+    "version": 4
+}
