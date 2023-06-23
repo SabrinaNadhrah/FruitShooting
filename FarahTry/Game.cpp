@@ -543,7 +543,7 @@ Player1 player1("Player 1", screenWidth / 2, screenHeight - 100);
 int direction = 1;
 
 // Game loop
-while (!kbhit())
+while (true)
 {
     // Clear the screen
     cleardevice();
@@ -590,7 +590,7 @@ while (!kbhit())
     player1.drawCharacter();
 
     // Delay for smooth animation
-    delay(200);
+    delay(100);
 }
 
     }
@@ -603,7 +603,7 @@ while (!kbhit())
 
         // Game loop
 // Game loop
-while (!kbhit())
+while (true)
 {
     // Clear the screen
     cleardevice();
