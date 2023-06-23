@@ -1,9 +1,15 @@
 #include <graphics.h>
+#include <iostream>
+#include <string>
 
+using namespace std;
+
+// Display Menu
 void displayMenu()
 {
     int screenWidth = getmaxwidth();
-	int screenHeight = getmaxheight();
+    int screenHeight = getmaxheight();
+
     // Display menu implementation
     // Set background color
     setbkcolor(BLACK);
@@ -38,10 +44,111 @@ void displayMenu()
     // Close the graphics window
     closegraph();
 }
+
+// Class Character
+class Character {
+protected:
+    string playerName;
+    int positionX;
+    int positionY;
+
+public:
+    Character(const std::string& playerName, int playerPositionX, int playerPositionY);
+    virtual ~Character() {}
+
+    void setPosition(int x);
+    int getPosition() const;
+    int getY() const;
+    virtual void drawCharacter() = 0;
+    virtual void moveLeft() = 0;
+    virtual void moveRight() = 0;
+};
+
+Character::Character(const std::string& playerName, int playerPositionX, int playerPositionY)
+    : playerName(playerName), positionX(playerPositionX), positionY(playerPositionY) {}
+
+void Character::setPosition(int x) {
+    positionX = x;
+}
+
+int Character::getPosition() const {
+    return positionX;
+}
+
+int Character::getY() const {
+    return positionY;
+}
+
+// Class Player1
+class Player1 : public Character {
+private:
+    int size;
+    int score;
+
+public:
+    Player1(const std::string& playerName, int playerPositionX, int playerPositionY);
+
+    void drawCharacter() override;
+    void moveLeft() override;
+    void moveRight() override;
+};
+
+Player1::Player1(const std::string& playerName, int playerPositionX, int playerPositionY)
+    : Character(playerName, playerPositionX, playerPositionY) {}
+
+void Player1::drawCharacter() {
+    int x = positionX;
+    int y = positionY;
+
+    // Draw the character using graphics library or other method
+    readimagefile("cat.jpg", x, y, x + 150, y + 150);
+}
+
+void Player1::moveLeft() {
+    positionX -= 5;
+}
+
+void Player1::moveRight() {
+    positionX += 5;
+}
+
+// Class Player2
+class Player2 : public Character {
+private:
+    int size;
+    int health;
+
+public:
+    Player2(const std::string& playerName, int playerPositionX, int playerPositionY);
+
+    void drawCharacter() override;
+    void moveLeft() override;
+    void moveRight() override;
+};
+
+Player2::Player2(const std::string& playerName, int playerPositionX, int playerPositionY)
+    : Character(playerName, playerPositionX, playerPositionY) {}
+
+void Player2::drawCharacter() {
+    int x = positionX;
+    int y = positionY;
+
+    // Draw the character using graphics library or other method
+    readimagefile("cat.jpg", x, y, x + 150, y + 150);
+}
+
+void Player2::moveLeft() {
+    positionX -= 5;
+}
+
+void Player2::moveRight() {
+    positionX += 5;
+}
+
 int main()
 {
-	int screenWidth = getmaxwidth();
-	int screenHeight = getmaxheight();
+    int screenWidth = getmaxwidth();
+    int screenHeight = getmaxheight();
     initwindow(screenWidth, screenHeight, "Game Start");
 
     displayMenu();
