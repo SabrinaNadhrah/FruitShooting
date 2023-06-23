@@ -48,11 +48,14 @@ protected:
     string playerName;
     int positionX;
     int positionY;
+    int direction;  // New member to store the character's movement direction (-1 for left, 1 for right)
 
 public:
     Character(const std::string& playerName, int playerPositionX, int playerPositionY);
     virtual ~Character() {}
-
+    int getDirection() const {
+        return direction;
+    }
     void setPosition(int x);
     int getPosition() const;
     int getY() const;
@@ -62,7 +65,7 @@ public:
 };
 
 Character::Character(const std::string& playerName, int playerPositionX, int playerPositionY)
-    : playerName(playerName), positionX(playerPositionX), positionY(playerPositionY) {}
+    : playerName(playerName), positionX(playerPositionX), positionY(playerPositionY), direction(1) {}  // Set default direction to right (1)
 
 void Character::setPosition(int x) {
     positionX = x;
@@ -102,11 +105,21 @@ void Player1::drawCharacter() {
 }
 
 void Player1::moveLeft() {
-    positionX -= 5;
+    positionX -= 5 * direction;
+
+    // Reverse direction if the character reaches the left edge
+    if (positionX < 0){
+        direction = 1;
+        positionX = 0;}
 }
 
 void Player1::moveRight() {
-    positionX += 5;
+    positionX += 5*direction;
+
+    // Reverse direction if the character reaches the right edge
+    if (positionX + 150 > getmaxwidth()){
+        direction = -1;
+        positionX = getmaxwidth() - 150;}
 }
 
 // Class Player2
@@ -135,11 +148,21 @@ void Player2::drawCharacter() {
 }
 
 void Player2::moveLeft() {
-    positionX -= 5;
+    positionX -= 5*direction;
+
+    // Reverse direction if the character reaches the left edge
+    if (positionX <= 0){
+        direction = 1;
+        positionX = 0;}
 }
 
 void Player2::moveRight() {
-    positionX += 5;
+    positionX += 5*direction;
+
+    // Reverse direction if the character reaches the right edge
+    if (positionX + 150 > getmaxwidth()){
+        direction = -1;
+        positionX = getmaxwidth() - 150;}
 }
 
 // Function to select game mode
@@ -213,8 +236,20 @@ int main()
             // Clear the screen
             cleardevice();
 
-            // Update and draw the character
-            player1.moveLeft(); // Example movement
+            // Update the character's position
+            player1.moveLeft();
+
+            // Check if the character reaches the screen boundaries
+            if (player1.getPosition() < 0)
+            {
+                player1.setPosition(0);  // Set character position to the left edge
+            }
+            else if (player1.getPosition() + 150 > screenWidth)
+            {
+                player1.setPosition(screenWidth - 150);  // Set character position to the right edge
+            }
+
+            // Draw the character
             player1.drawCharacter();
 
             // Delay for smooth animation
@@ -229,21 +264,49 @@ int main()
         Player2 player2("Player 2", screenWidth / 2 + 100, screenHeight - 100);
 
         // Game loop
-        while (!kbhit())
-        {
-            // Clear the screen
-            cleardevice();
+// Game loop
+while (!kbhit())
+{
+    // Clear the screen
+    cleardevice();
 
-            // Update and draw the characters
-            player1.moveLeft(); // Example movement
-            player1.drawCharacter();
+    // Update the characters' positions
+    player1.moveLeft();
+    player2.moveRight();
 
-            player2.moveRight(); // Example movement
-            player2.drawCharacter();
+    // Check if Player1 reaches the left or right edge
+if (player1.getPosition() <= 0)
+{
+    player1.moveRight();  // Reverse direction
+    player1.setPosition(0);  // Set character position to the left edge
+}
+else if (player1.getPosition() + 150 > screenWidth)
+{
+    player1.moveLeft();  // Reverse direction
+    player1.setPosition(screenWidth - 150);  // Set character position to the right edge
+}
 
-            // Delay for smooth animation
-            delay(100);
-        }
+// Check if Player2 reaches the left or right edge
+if (player2.getPosition() <=0)
+{
+    player2.moveRight();  // Reverse direction
+    player2.setPosition(0);  // Set character position to the left edge
+}
+else if (player2.getPosition() + 150 > screenWidth)
+{
+    player2.moveLeft();  // Reverse direction
+    player2.setPosition(screenWidth - 150);  // Set character position to the right edge
+}
+
+    // Draw the characters
+    player1.drawCharacter();
+    player2.drawCharacter();
+
+    // Delay for smooth animation
+    delay(40);
+}
+
+
     }
 
     closegraph();
