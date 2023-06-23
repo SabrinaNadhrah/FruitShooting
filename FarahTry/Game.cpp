@@ -40,9 +40,6 @@ void displayMenu()
 
     // Delay to allow the graphics window to refresh
     delay(200);
-
-    // Close the graphics window
-    closegraph();
 }
 
 // Class Character
@@ -145,6 +142,55 @@ void Player2::moveRight() {
     positionX += 5;
 }
 
+// Function to select game mode
+int selectMode()
+{
+    int screenWidth = getmaxwidth();
+    int screenHeight = getmaxheight();
+
+    // Clear the screen
+    cleardevice();
+
+    // Display mode selection menu
+    settextstyle(BOLD_FONT, HORIZ_DIR, 4);
+    outtextxy(screenWidth / 2 - 200, screenHeight / 2 - 100, "Select Game Mode");
+
+    // Display mode options
+    settextstyle(BOLD_FONT, HORIZ_DIR, 2);
+    outtextxy(screenWidth / 2 - 100, screenHeight / 2, "1. Single Player");
+    outtextxy(screenWidth / 2 - 100, screenHeight / 2 + 50, "2. Two Players");
+
+    // Wait for user input
+    int mode = 0;
+    while (mode != 1 && mode != 2)
+    {
+        while (!ismouseclick(WM_LBUTTONDOWN))
+        {
+            delay(100);
+        }
+
+        // Get mouse click coordinates
+        int mouseX, mouseY;
+        getmouseclick(WM_LBUTTONDOWN, mouseX, mouseY);
+
+        // Check if the first option was clicked
+        if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 && mouseY <= screenHeight / 2 + 20)
+        {
+            mode = 1;
+        }
+        // Check if the second option was clicked
+        else if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 + 50 && mouseY <= screenHeight / 2 + 70)
+        {
+            mode = 2;
+        }
+
+        // Clear the mouse click event
+        clearmouseclick(WM_LBUTTONDOWN);
+    }
+
+    return mode;
+}
+
 int main()
 {
     int screenWidth = getmaxwidth();
@@ -152,5 +198,54 @@ int main()
     initwindow(screenWidth, screenHeight, "Game Start");
 
     displayMenu();
+
+    int gameMode = selectMode();
+
+    if (gameMode == 1)
+    {
+        // Single Player Mode
+        // Create and control one character (Player1)
+        Player1 player1("Player 1", screenWidth / 2, screenHeight - 100);
+
+        // Game loop
+        while (!kbhit())
+        {
+            // Clear the screen
+            cleardevice();
+
+            // Update and draw the character
+            player1.moveLeft(); // Example movement
+            player1.drawCharacter();
+
+            // Delay for smooth animation
+            delay(100);
+        }
+    }
+    else if (gameMode == 2)
+    {
+        // Two Players Mode
+        // Create and control two characters (Player1 and Player2)
+        Player1 player1("Player 1", screenWidth / 2 - 100, screenHeight - 100);
+        Player2 player2("Player 2", screenWidth / 2 + 100, screenHeight - 100);
+
+        // Game loop
+        while (!kbhit())
+        {
+            // Clear the screen
+            cleardevice();
+
+            // Update and draw the characters
+            player1.moveLeft(); // Example movement
+            player1.drawCharacter();
+
+            player2.moveRight(); // Example movement
+            player2.drawCharacter();
+
+            // Delay for smooth animation
+            delay(100);
+        }
+    }
+
+    closegraph();
     return 0;
 }
