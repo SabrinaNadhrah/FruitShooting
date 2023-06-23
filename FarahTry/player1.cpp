@@ -1,4 +1,4 @@
-#include "Player1.h"
+#include "player1.h"
 #include <graphics.h>
 
 Player1::Player1(const std::string& playerName, int playerPositionX, int playerPositionY)
