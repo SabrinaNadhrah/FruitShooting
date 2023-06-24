@@ -10,6 +10,7 @@ private:
     int current_score;
     int deduction_count;
     int marks_gained_count;
+    int health; // New health variable
 
 public:
     Score();
@@ -18,10 +19,13 @@ public:
     int getHighScore() const;
     int getDeductionCount() const;
     int getMarksGainedCount() const;
+    int getHealth() const; // New health getter
 
     void updateScore(int marksGained, int deduction);
+    void decreaseHealth(int amount); // New health modifier
 
     void drawScoreboard() const;
 };
 
 #endif
+
