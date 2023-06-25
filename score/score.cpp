@@ -7,6 +7,7 @@ Score::Score() {
     current_score = 0;
     deduction_count = 0;
     marks_gained_count = 0;
+    health = 150; // Initialize health to max value
 }
 
 int Score::getScore() const {
@@ -25,6 +26,10 @@ int Score::getMarksGainedCount() const {
     return marks_gained_count;
 }
 
+int Score::getHealth() const {
+    return health;
+}
+
 void Score::updateScore(int marksGained, int deduction) {
     current_score += marksGained - deduction;
 
@@ -41,6 +46,13 @@ void Score::updateScore(int marksGained, int deduction) {
     }
 }
 
+void Score::decreaseHealth(int amount) {
+    health -= amount;
+    if (health < 0) {
+        health = 0;
+    }
+}
+
 void Score::drawScoreboard() const {
     // Initialize graphics
     initwindow(800, 600, "Scoreboard");
@@ -49,12 +61,14 @@ void Score::drawScoreboard() const {
     readimagefile("forest.jpeg", 0, 0, 800, 600);
 
     // Draw scoreboard background and current score
-
     setcolor(WHITE);
     setfillstyle(SOLID_FILL, WHITE);
     bar(5, 5, 220, 80); // Example background rectangle
-   
-    
+
+    // Draw health bar
+    setcolor(RED);
+    setfillstyle(SOLID_FILL, RED);
+    bar(755, 10, 755 - health, 40); // Health bar position
 
     // Convert the score, deduction count, and marks gained count to strings
     std::string scoreText = "Score: " + std::to_string(current_score);
@@ -92,17 +106,19 @@ int main() {
 
     // Update the score with example values
     score.updateScore(10, 0); // Marks gained: 10, Deduction: 0
-    score.updateScore(0, 4); // Marks gained: 0, Deduction: 4
-    score.updateScore(8, 2); // Marks gained: 8, Deduction: 2
+    score.updateScore(0, 4);  // Marks gained: 0, Deduction: 4
+    score.updateScore(8, 2);  // Marks gained: 8, Deduction: 2
+    score.decreaseHealth(30); // Decrease health by 30
 
     // Display the scoreboard
     score.drawScoreboard();
 
-    // Access and display the current score, high score, deduction count, and marks gained count
+    // Access and display the current score, high score, deduction count, marks gained count, and health
     std::cout << "Current Score: " << score.getScore() << std::endl;
     std::cout << "High Score: " << score.getHighScore() << std::endl;
     std::cout << "Deduction Count: " << score.getDeductionCount() << std::endl;
     std::cout << "Marks Gained Count: " << score.getMarksGainedCount() << std::endl;
+    std::cout << "Health: " << score.getHealth() << std::endl;
 
     // Wait for a key press before exiting
     std::cout << "Press any key to exit..." << std::endl;
