@@ -1,6 +1,8 @@
 #include <graphics.h>
 #include <iostream>
 #include <string>
+#include <ctime>
+#include <cstdlib>
 
 using namespace std;
 
@@ -580,7 +582,7 @@ private:
     Weapon *weapon; // Forward declaration allows using the pointer to Weapon
 
 public:
-    Bullet(int _x = 0, int _y = 0, int _size = 10, int _color = BLUE, int _speed = 10);
+    Bullet(int _x = 0, int _y = 0, int _size = 10, int _color = BLUE, int _speed = 100);
 
     int getY() const;
     bool getActive() const;
@@ -590,6 +592,7 @@ public:
     void undraw() const;
     void move();
     void reset();
+    bool checkCollision (const Fruit *fruit) const ;
 };
 
 class Weapon
@@ -599,7 +602,7 @@ private:
     int width, height;
     int color;
     Bullet *bullets; // Use the pointer to Bullet
-    std::string imagePath;
+    string imagePath;
 
 public:
     Weapon(int _x = 0, int _y = 0, int _width = 150, int _height = 100, int _color = BLACK);
@@ -616,7 +619,7 @@ public:
     void doAction();
     int getPosition() const;
     void update();
-    void setImagePath(const std::string &path);
+    void setImagePath(const string &path);
 };
 
 // Implement the Bullet class methods
@@ -671,6 +674,20 @@ void Bullet::reset()
     x = weapon->getX() + weapon->getWidth() / 2;
     y = weapon->getY() - size;
     active = true;
+}
+
+bool Bullet::checkCollision(const Fruit *fruit) const
+{
+    int fruitX = fruit->setX();
+    int fruitY = fruit->setY();
+    int fruitWidth = fruit->getWidth();
+    int fruitHeight = fruit->getHeight();
+
+    // Check if the bullet is within the bounds of the fruit
+    if (x >= fruitX && x <= fruitX + fruitWidth && y >= fruitY && y <= fruitY + fruitHeight)
+        return true;
+
+    return false;
 }
 
 // Implement the Weapon class methods
@@ -764,7 +781,7 @@ void Weapon::setImagePath(const std::string &path)
     imagePath = path;
 }
 
-int chooseWeaponPage()
+/*int chooseWeaponPage()
 {
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
@@ -789,11 +806,11 @@ int chooseWeaponPage()
 
     closegraph();
     return choice;
-}
+}*/
 
-bool checkCollision(Fruit* fruit, Bullet* bullet) {
-    int fruitLeft = fruit->setX(xPos) - fruitWidth / 2;
-    int fruitRight = fruit->setX(xPos) + fruitWidth / 2;
+/*bool checkCollision(Fruit* fruit, Bullet* bullet) {
+    int fruitLeft = fruit->setX() - fruitWidth / 2;
+    int fruitRight = fruit->setX() + fruitWidth / 2;
     int fruitTop = fruit->setY() - fruitHeight / 2;
     int fruitBottom = fruit->setY() + fruitHeight / 2;
 
@@ -807,16 +824,18 @@ bool checkCollision(Fruit* fruit, Bullet* bullet) {
     }
 
     return false; // No collision
-}
+}*/
 
 int main()
 {
-    // srand(static_cast<unsigned>(time(nullptr)));
+    srand(static_cast<unsigned>(time(nullptr)));
     int page = 0;
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
-    initwindow(screenWidth, screenHeight, "Game Start");
+    initwindow(screenWidth, screenHeight, "Aim and Fire");
     readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
+    void *imageBuffer = malloc(imagesize(0, 0, screenWidth, screenHeight));
+    getimage(0, 0, screenWidth, screenHeight, imageBuffer);
 
     // Start Page
     displayMenu();
@@ -826,13 +845,13 @@ int main()
     int choice = 1;
     // choice = chooseWeaponPage();
 
-    Weapon weaponobj ;
+   Bullet bullet ;
 
     // start weapon
     Weapon w1(screenWidth / 2, screenHeight - 230);
     Weapon w2(screenWidth / 2, screenHeight - 230);
 
-    std::string weaponImagePath;
+    string weaponImagePath;
     if (choice == 1)
     {
         // Rifle
@@ -858,6 +877,7 @@ int main()
 
     Fruit *fruits[numFruits];
     initializeFruits(fruits);
+
     // start boom
     int obstacleWidth = 100;  // Adjust with the actual width of your obstacle image
     int obstacleHeight = 100; // Adjust with the actual height of your obstacle image
@@ -909,9 +929,9 @@ int main()
                 fruits[i]->move();
                 fruits[i]->draw();
 
-                if (checkCollision(fruits[i], weaponobj.getActive())) {
-                delete fruits[i];
-                fruits[i] = nullptr;
+                if (bullet.getActive() && bullet.checkCollision(fruits[i])) {
+                    fruits[i]->setY(-fruitHeight) ;
+                    bullet.reset() ;
                 }
             }
 
@@ -988,9 +1008,9 @@ int main()
                 fruits[i]->move();
                 fruits[i]->draw();
 
-                if (checkCollision(fruits[i], weaponobj.getActive())) {
-                delete fruits[i];
-                fruits[i] = nullptr;
+                if (bullet.getActive() && bullet.checkCollision(fruits[i])) {
+                    fruits[i]->setY(-fruitHeight) ;
+                    bullet.reset() ;
                 }
             }
 
@@ -1065,7 +1085,7 @@ int main()
         }
     }
     deleteFruits(fruits);
-    // free(imageBuffer);
+    free(imageBuffer);
     closegraph();
     return 0;
 }
