@@ -350,6 +350,8 @@ public:
     virtual void draw() = 0;
     void setX(int xPos);
     void setY(int yPos);
+    int getWidth() const ;
+    int getHeight() const ;
 };
 
 class SmallFruit : public Fruit
@@ -384,6 +386,14 @@ Fruit::Fruit(int s, int sc) : size(s), score(sc)
 }
 
 Fruit::~Fruit() {}
+
+int Fruit::getWidth() const {
+    return fruitWidth ;
+}
+
+int Fruit::getHeight() const {
+    return fruitHeight ;
+}
 
 void Fruit::move()
 {
@@ -592,7 +602,7 @@ public:
     void undraw() const;
     void move();
     void reset();
-    bool checkCollision (const Fruit *fruit) const ;
+    bool checkCollision(const Fruit *fruit) const;
 };
 
 class Weapon
@@ -678,8 +688,8 @@ void Bullet::reset()
 
 bool Bullet::checkCollision(const Fruit *fruit) const
 {
-    int fruitX = fruit->setX();
-    int fruitY = fruit->setY();
+    int fruitX = fruit->setX(int xPos);
+    int fruitY = fruit->setY(int yPos);
     int fruitWidth = fruit->getWidth();
     int fruitHeight = fruit->getHeight();
 
@@ -826,6 +836,46 @@ void Weapon::setImagePath(const std::string &path)
     return false; // No collision
 }*/
 
+class Score
+{
+protected:
+    int sc;
+    Character *character;
+
+public:
+    Score() : sc(0), character(nullptr) {}
+    Score(Character *charPtr) : sc(0), character(charPtr) {}
+    // Score(int initialSc, Character *character) : character(initialSc), character(character) {}
+    Character *getCharacter() const { return character; }
+    void hitSmallFruit() { sc += 6; }
+    void hitMedFruit() { sc += 4; }
+    void hitBigFruit() { sc += 2; }
+    void hitObstacle() { sc -= 5; }
+    void setSc(int s) { sc = s; }
+    int getSc() const { return sc; }
+};
+// aleysha
+void displayDashboard(int score, int timeRemaining)
+{
+    settextstyle(BOLD_FONT, HORIZ_DIR, 3);
+    setcolor(BLACK);
+
+    string playerScore = "Score: " + to_string(score);
+    char scoreStr[playerScore.length() + 1];
+    strcpy(scoreStr, playerScore.c_str());
+
+    string timeStr = "Time: " + to_string(timeRemaining) + " s";
+    char timeRemainingStr[timeStr.length() + 1];
+    strcpy(timeRemainingStr, timeStr.c_str());
+
+    // int leftX = 10;
+    int centerX = getmaxx() / 2 - textwidth(scoreStr) / 2;
+    int rightX = getmaxx() - textwidth(timeRemainingStr) - 10;
+
+    outtextxy(centerX, 10, scoreStr);
+    outtextxy(rightX, 10, timeRemainingStr);
+}
+
 int main()
 {
     srand(static_cast<unsigned>(time(nullptr)));
@@ -845,7 +895,9 @@ int main()
     int choice = 1;
     // choice = chooseWeaponPage();
 
-   Bullet bullet ;
+    Character player;
+    Bullet bullet;
+    Score score(&player);
 
     // start weapon
     Weapon w1(screenWidth / 2, screenHeight - 230);
@@ -929,9 +981,20 @@ int main()
                 fruits[i]->move();
                 fruits[i]->draw();
 
-                if (bullet.getActive() && bullet.checkCollision(fruits[i])) {
-                    fruits[i]->setY(-fruitHeight) ;
-                    bullet.reset() ;
+                if (Bullet.checkCollision(fruits[i]))
+                {
+                    fruits[i]->setY(-100);
+                    fruits[i]->move() ;
+
+                    if (dynamic_cast<SmallFruit*>(fruits[i]) != nullptr) {
+                        score.hitSmallFruit() ;
+                    }
+                    else if (dynamic_cast<MediumFruit*>(fruits[i]) != nullptr) {
+                        score.hitMedFruit() ;
+                    }
+                    else if (dynamic_cast<BigFruit*>(fruits[i]) != nullptr) {
+                        score.hitBigFruit() ;
+                    }
                 }
             }
 
@@ -982,6 +1045,8 @@ int main()
             page = 1 - page;
             // Delay for smooth animation
             delay(100);
+
+            // displayDashboard(score.getSc(), timeRemaining);
         }
     }
     else if (gameMode == 2)
@@ -1008,9 +1073,10 @@ int main()
                 fruits[i]->move();
                 fruits[i]->draw();
 
-                if (bullet.getActive() && bullet.checkCollision(fruits[i])) {
-                    fruits[i]->setY(-fruitHeight) ;
-                    bullet.reset() ;
+                if (bullet.getActive() && bullet.checkCollision(fruits[i]))
+                {
+                    fruits[i]->setY(-fruitHeight);
+                    bullet.reset();
                 }
             }
 
