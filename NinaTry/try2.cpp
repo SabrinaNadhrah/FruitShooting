@@ -716,7 +716,7 @@ int main()
      Weapon w1(screenWidth / 2, screenHeight - 230);
     
     std::string weaponImagePath;
-    if (option == 1) {
+    if (choice == 1) {
         // Rifle
         weaponImagePath = "riffle.jpg";
     } else if (choice == 2) {
