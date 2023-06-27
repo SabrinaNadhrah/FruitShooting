@@ -830,7 +830,8 @@ void displayDashboard(int score, int timeRemaining)
     outtextxy(rightX, 10, timeRemainingStr);
 }
 
-void drawGameOver() {
+void drawGameOver()
+{
     settextstyle(BOLD_FONT, HORIZ_DIR, 4);
     setcolor(RED);
     outtextxy(screenWidth / 2 - 100, screenHeight / 2 - 50, "Game Over");
@@ -840,7 +841,8 @@ void drawGameOver() {
     outtextxy(screenWidth / 2 - 80, screenHeight / 2 + 50, "Play Again");
 }
 
-bool isMouseOverPlayAgain(int mx, int my) {
+bool isMouseOverPlayAgain(int mx, int my)
+{
     int playAgainX = screenWidth / 2 - 80;
     int playAgainY = screenHeight / 2 + 50;
     int playAgainWidth = 160;
@@ -849,16 +851,19 @@ bool isMouseOverPlayAgain(int mx, int my) {
     return (mx >= playAgainX && mx <= playAgainX + playAgainWidth && my >= playAgainY && my <= playAgainY + playAgainHeight);
 }
 
-void runGameOverPage() {
+void runGameOverPage()
+{
     initwindow(screenWidth, screenHeight, "Game Over Page");
 
     bool playAgain = false;
-    while (!playAgain) {
+    while (!playAgain)
+    {
         cleardevice();
 
         drawGameOver();
 
-        while (!ismouseclick(WM_LBUTTONDOWN)) {
+        while (!ismouseclick(WM_LBUTTONDOWN))
+        {
             delay(100);
         }
 
@@ -1009,9 +1014,11 @@ int main()
             double elapsedTime = difftime(currentTime, startTime);
 
             // Break the loop after approximately 30 seconds
-           if (elapsedTime >= 60.0){
+            if (elapsedTime >= 60.0)
+            {
                 runGameOverPage();
-                break;}
+                break;
+            }
             // Delay for smooth animation
             delay(40);
         }
@@ -1115,9 +1122,11 @@ int main()
             double elapsedTime = difftime(currentTime, startTime);
 
             // Break the loop after approximately 30 seconds
-            if (elapsedTime >= 60.0){
+            if (elapsedTime >= 60.0)
+            {
                 runGameOverPage();
-                break;}
+                break;
+            }
 
             // Delay for smooth animation
             delay(40);
