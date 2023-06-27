@@ -35,7 +35,7 @@ private:
     int width, height;
     int color;
     Bullet* bullets; // Use the pointer to Bullet
-    std::string imageFilename; // Image filename for the weapon
+    std::string imagePath;
 
 public:
     Weapon(int _x = 0, int _y = 0, int _width = 150, int _height = 100, int _color = BLACK);
@@ -52,7 +52,7 @@ public:
     void doAction();
     int getPosition() const;
     void update();
-    void setImageFilename(const std::string& filename); // Set image filename for the weapon
+    void setImagePath(const std::string& path);
 };
 
 // Implement the Bullet class methods
@@ -143,25 +143,11 @@ void Weapon::shoot() {
 }
 
 void Weapon::draw() const {
-    if (!imageFilename.empty()) {
-        readimagefile(imageFilename.c_str(), x, y, x + width, y + height);
-    } else {
-        setcolor(color);
-        setfillstyle(SOLID_FILL, color);
-        rectangle(x, y, x + width, y + height);
-        floodfill(x + width / 2, y + height / 2, color);
-    }
+    readimagefile(imagePath.c_str(), x, y, x + width, y + height);
 }
 
 void Weapon::undraw() const {
-    if (!imageFilename.empty()) {
-        // Optional: Implement undraw functionality for image if needed
-    } else {
-        setcolor(BLACK);
-        setfillstyle(SOLID_FILL, BLACK);
-        rectangle(x, y, x + width, y + height);
-        floodfill(x + width / 2, y + height / 2, BLACK);
-    }
+    // Optional: Implement undraw functionality if needed
 }
 
 void Weapon::move(int dx) {
@@ -184,94 +170,85 @@ void Weapon::update() {
     // Optional: Implement update functionality if needed
 }
 
-void Weapon::setImageFilename(const std::string& filename) {
-    imageFilename = filename;
+void Weapon::setImagePath(const std::string& path) {
+    imagePath = path;
+}
+
+int chooseWeaponPage() {
+    int screenWidth = getmaxwidth();
+    int screenHeight = getmaxheight();
+    initwindow(screenWidth, screenHeight, "Choose Weapon");
+
+    // Display the available weapons and let the player choose
+    int choice = 0;
+    while (choice < 1 || choice > 3) {
+        cleardevice();
+        outtextxy(screenWidth / 2 - 50, screenHeight / 2 - 30, "Choose a Weapon:");
+        outtextxy(screenWidth / 2 - 60, screenHeight / 2, "1. Rifle");
+        outtextxy(screenWidth / 2 - 60, screenHeight / 2 + 20, "2. Cannon");
+        outtextxy(screenWidth / 2 - 60, screenHeight / 2 + 40, "3. Gun");
+
+        char ch = getch();
+        if (ch >= '1' && ch <= '3') {
+            choice = ch - '0';
+        }
+    }
+
+    closegraph();
+    return choice;
 }
 
 int main() {
+    int choice = chooseWeaponPage();
+    initwindow(getmaxwidth(), getmaxheight(), "Fruit Shooting");
+    setbkcolor(WHITE);
+
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
-    initwindow(screenWidth, screenHeight, "Fruit Shooting");
+    Weapon w1(screenWidth / 2, screenHeight - 230);
+    
+    std::string weaponImagePath;
+    if (choice == 1) {
+        // Rifle
+        weaponImagePath = "riffle.jpg";
+    } else if (choice == 2) {
+        // Cannon
+        weaponImagePath = "cannon.jpg";
+    } else if (choice == 3) {
+        // Gun
+        weaponImagePath = "gunn.jpg";
+    }
+    w1.setImagePath(weaponImagePath);
 
-    int option = 0;
-    int mouseX, mouseY;
+    char ch;
+
+    int direction = 1;
 
     while (true) {
-        if (ismouseclick(WM_LBUTTONDOWN)) {
-            clearmouseclick(WM_LBUTTONDOWN);
-            mouseX = mousex();
-            mouseY = mousey();
+        delay(40);
 
-            if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 - 50 && mouseY <= screenHeight / 2 + 50) {
-                option = 1; // 1 player selected
-                break;
-            } else if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 + 100 && mouseY <= screenHeight / 2 + 200) {
-                option = 2; // 2 players selected
-                break;
-            } else if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 + 250 && mouseY <= screenHeight / 2 + 350) {
-                option = 3; // Cannon selected
-                break;
-            }
-        }
+        // Move the weapon
+        w1.move(5 * direction);
 
-        setcolor(WHITE);
-        settextstyle(BOLD_FONT, HORIZ_DIR, 3);
-        outtextxy(screenWidth / 2 - 80, screenHeight / 2 - 100, "Choose Your Weapon!");
-        setfillstyle(SOLID_FILL, LIGHTGRAY);
+        // Reverse direction if the weapon reaches the screen boundaries
+        if (w1.getPosition() <= 0 || w1.getPosition() >= (screenWidth - 155))
+            direction *= -1;
 
-        // Draw 1 player button with Rifle image
-        rectangle(screenWidth / 2 - 100, screenHeight / 2 - 50, screenWidth / 2 + 100, screenHeight / 2 + 50);
-        outtextxy(screenWidth / 2 - 30, screenHeight / 2 + 60, "Rifle");
+        w1.doAction();
 
-        // Draw 2 players button with Gun image
-        rectangle(screenWidth / 2 - 100, screenHeight / 2 + 100, screenWidth / 2 + 100, screenHeight / 2 + 200);
-        outtextxy(screenWidth / 2 - 30, screenHeight / 2 + 210, "Gun");
-
-        // Draw Cannon button with Cannon image
-        rectangle(screenWidth / 2 - 100, screenHeight / 2 + 250, screenWidth / 2 + 100, screenHeight / 2 + 350);
-        outtextxy(screenWidth / 2 - 30, screenHeight / 2 + 360, "Cannon");
-
-        delay(10);
-        cleardevice();
-    }
-
-    // Create the weapon based on the user's selection
-    Weapon weapon;
-    switch (option) {
-        case 1:
-            weapon.setImageFilename("riffle.jpg"); // Set the image filename for the Rifle
-            break;
-        case 2:
-            weapon.setImageFilename("gunn.jpg"); // Set the image filename for the Gun
-            break;
-        case 3:
-            weapon.setImageFilename("cannon.jpg"); // Set the image filename for the Cannon
-            break;
-    }
-
-    weapon.draw();
-
-    while (true) {
         if (kbhit()) {
-            char key = getch();
-            switch (key) {
-                case 'a':
-                case 'A':
-                    weapon.move(-20);
-                    break;
-                case 'd':
-                case 'D':
-                    weapon.move(20);
-                    break;
-                case ' ':
-                    weapon.shoot();
-                    break;
-            }
+            ch = getch();
+
+            if (ch == 27)
+                break;
+            else if (ch == ' ')
+                w1.shoot();
         }
 
-        weapon.doAction();
-        delay(10);
+        // Redraw the weapon
         cleardevice();
+        w1.update();
+        w1.draw();
     }
 
     closegraph();
