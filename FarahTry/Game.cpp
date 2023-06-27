@@ -21,7 +21,7 @@ void displayMenu()
     settextstyle(BOLD_FONT, HORIZ_DIR, 4);
 
     // Display title
-    outtextxy(screenWidth / 2 - 240, screenHeight / 2 - 100, "Welcome to Aim and Fire!");
+    outtextxy(screenWidth / 2 - 240, screenHeight / 2 - 100, "Welcome to Fruit Shooting");
 
     // Set text properties for instructions
     settextstyle(BOLD_FONT, HORIZ_DIR, 2);
@@ -41,13 +41,8 @@ void displayMenu()
     // Delay to allow the graphics window to refresh
     delay(200);
 }
-<<<<<<< HEAD
 void WeaponPage()
 {
-=======
-
-void WeaponPage(){
->>>>>>> 793fa0b4ad69cbe90294bdd30e6ae4a1b8421008
 
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
@@ -89,7 +84,7 @@ void WeaponPage(){
         setfillstyle(SOLID_FILL, LIGHTGRAY);
 
         // Draw 1 player button with Rifle image
-        readimagefile("riffle.jpg", screenWidth / 2 - 100, screenHeight / 2 - 50, screenWidth / 2 + 100, screenHeight / 2 + 50);
+        readimagefile("rifflee.jpg", screenWidth / 2 - 100, screenHeight / 2 - 50, screenWidth / 2 + 100, screenHeight / 2 + 50);
         outtextxy(screenWidth / 2 - 30, screenHeight / 2 + 60, "Rifle");
 
         // Draw 2 players button with Gun image
@@ -193,7 +188,7 @@ void Player1::drawCharacter()
 
 void Player1::moveLeft()
 {
-    positionX -= 25 * direction;
+    positionX -= 20 * direction;
 
     // Reverse direction if the character reaches the left or right edge
     if (positionX <= 0 || positionX + 150 > getmaxwidth())
@@ -208,7 +203,7 @@ void Player1::moveLeft()
 
 void Player1::moveRight()
 {
-    positionX += 25 * direction;
+    positionX += 20 * direction;
 
     // Reverse direction if the character reaches the left or right edge
     if (positionX <= 0 || positionX + 150 > getmaxwidth())
@@ -331,7 +326,7 @@ const int screenWidth = getmaxwidth();
 const int screenHeight = getmaxheight();
 const int fruitWidth = 200;
 const int fruitHeight = 50;
-const int fruitSpeed = 5;
+const int fruitSpeed = 30;
 const int numFruits = 10;
 
 class Fruit
@@ -798,29 +793,18 @@ int main()
     int screenHeight = getmaxheight();
     initwindow(screenWidth, screenHeight, "Game Start");
     readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
-<<<<<<< HEAD
-=======
-    
-    //Start Page
-    displayMenu();
-    //Weapon page
-<<<<<<< HEAD
-  // WeaponPage(); //belum link
-=======
-    chooseWeaponPage(); 
->>>>>>> d6e3b6c2dae9325f0501f9ef624813740c85ddb6
->>>>>>> 793fa0b4ad69cbe90294bdd30e6ae4a1b8421008
 
     // Start Page
     displayMenu();
     // select gamemode
     int gameMode = selectMode();
     // Weapon page
-    int choice=2;
-    //choice = chooseWeaponPage();
+    int choice = 1;
+    // choice = chooseWeaponPage();
 
     // start weapon
     Weapon w1(screenWidth / 2, screenHeight - 230);
+    Weapon w2(screenWidth / 2, screenHeight - 230);
 
     std::string weaponImagePath;
     if (choice == 1)
@@ -839,6 +823,7 @@ int main()
         weaponImagePath = "gunn.jpg";
     }
     w1.setImagePath(weaponImagePath);
+    w2.setImagePath(weaponImagePath);
 
     char ch;
 
@@ -875,7 +860,7 @@ int main()
         {
             // Clear the screen
             cleardevice();
-            //setactivepage;
+            // setactivepage;
             readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
             // Move and draw the obstacles
             obstacle1.undrawObstacle();
@@ -897,7 +882,7 @@ int main()
             }
 
             // Move the weapon
-            w1.move(19 * direction);
+            w1.move(5 * direction);
 
             // Reverse direction if the weapon reaches the screen boundaries
             if (w1.getPosition() <= 0 || w1.getPosition() >= (screenWidth - 155))
@@ -922,25 +907,26 @@ int main()
             // Update the character's position based on the direction
             player1.setPosition(player1.getPosition() + 5 * direction);
 
-            // Check if the character reaches the screen boundaries
-            if (player1.getPosition() < 0)
-            {
-                // Change direction to right if character reaches the left edge
-                direction = 1;
-                player1.setPosition(0); // Set character position to the left edge
-            }
-            else if (player1.getPosition() + 150 > screenWidth)
-            {
-                // Change direction to left if character reaches the right edge
-                direction = -1;
-                player1.setPosition(screenWidth - 150); // Set character position to the right edge
-            }
+            /*
+                        // Check if the character reaches the screen boundaries
+                        if (player1.getPosition() < 0)
+                        {
+                            // Change direction to right if character reaches the left edge
+                            direction = 1;
+                            player1.setPosition(0); // Set character position to the left edge
+                        }
+                        else if (player1.getPosition() + 150 > screenWidth)
+                        {
+                            // Change direction to left if character reaches the right edge
+                            direction = -1;
+                            player1.setPosition(screenWidth - 150); // Set character position to the right edge
+                        } */
 
             // Draw the character
             player1.drawCharacter();
 
             // Delay for smooth animation
-            delay(150);
+            delay(100);
         }
     }
     else if (gameMode == 2)
@@ -977,32 +963,52 @@ int main()
             obstacle2.drawObstacle();
             // Update the characters' positions
             player1.moveLeft();
+            w2.move(-10 * direction);
+
+            // Reverse direction if the weapon reaches the screen boundaries
+            if (w2.getPosition() <= 0 || w2.getPosition() >= (screenWidth - 155))
+                direction *= -1;
+
+            w2.doAction();
+
+            if (kbhit())
+            {
+                ch = getch();
+
+                if (ch == 27)
+                    break;
+                else if (ch == ' ')
+                    w1.shoot();
+            }
+
+            // Redraw the weapon
+            w2.update();
+            w2.draw();
+
             player2.moveRight();
+            // Move the weapon
 
-            // Check if Player1 reaches the left or right edge
-            if (player1.getPosition() <= 0)
-            {
-                player1.moveRight();    // Reverse direction
-                player1.setPosition(0); // Set character position to the left edge
-            }
-            else if (player1.getPosition() + 150 > screenWidth)
-            {
-                player1.moveLeft();                     // Reverse direction
-                player1.setPosition(screenWidth - 150); // Set character position to the right edge
-            }
+            w1.move(5 * direction);
 
-            // Check if Player2 reaches the left or right edge
-            if (player2.getPosition() <= 0)
+            // Reverse direction if the weapon reaches the screen boundaries
+            if (w1.getPosition() <= 0 || w1.getPosition() >= (screenWidth - 155))
+                direction *= -1;
+
+            w1.doAction();
+
+            if (kbhit())
             {
-                player2.moveRight();    // Reverse direction
-                player2.setPosition(0); // Set character position to the left edge
-            }
-            else if (player2.getPosition() + 150 > screenWidth)
-            {
-                player2.moveLeft();                     // Reverse direction
-                player2.setPosition(screenWidth - 150); // Set character position to the right edge
+                ch = getch();
+
+                if (ch == 27)
+                    break;
+                else if (ch == ' ')
+                    w1.shoot();
             }
 
+            // Redraw the weapon
+            w1.update();
+            w1.draw();
             // Draw the characters
             player1.drawCharacter();
             player2.drawCharacter();
