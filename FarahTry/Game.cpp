@@ -1,6 +1,7 @@
 #include <graphics.h>
 #include <iostream>
 #include <string>
+#include <ctime>
 
 using namespace std;
 
@@ -789,8 +790,48 @@ int chooseWeaponPage()
     return choice;
 }
 
+// aleysha
+class Score
+{
+protected:
+    int sc;
+    Character *character;
+
+public:
+    Score() : sc(0), character(nullptr) {}
+    // Score(int initialSc, Character *character) : character(initialSc), character(character) {}
+    Character *getCharacter() const { return character; }
+    void hitSmallFruit() { sc += 6; }
+    void hitMedFruit() { sc += 4; }
+    void hitBigFruit() { sc += 2; }
+    void hitObstacle() { sc -= 5; }
+    void setSc(int s) { sc = s; }
+    int getSc() const { return sc; }
+};
+// aleysha
+void displayDashboard(int score, int timeRemaining)
+{
+    settextstyle(BOLD_FONT, HORIZ_DIR, 3);
+    setcolor(BLACK);
+
+    string playerScore = "Score: " + to_string(score);
+    char scoreStr[playerScore.length() + 1];
+    strcpy(scoreStr, playerScore.c_str());
+
+    string timeStr = "Time: " + to_string(timeRemaining) + " s";
+    char timeRemainingStr[timeStr.length() + 1];
+    strcpy(timeRemainingStr, timeStr.c_str());
+
+    // int leftX = 10;
+    int centerX = getmaxx() / 2 - textwidth(scoreStr) / 2;
+    int rightX = getmaxx() - textwidth(timeRemainingStr) - 10;
+
+    outtextxy(centerX, 10, scoreStr);
+    outtextxy(rightX, 10, timeRemainingStr);
+}
+
 int main()
-{   
+{
     int page = 0;
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
@@ -807,7 +848,7 @@ int main()
 
     // start weapon
     Weapon w1(screenWidth / 2 + 100, screenHeight - 150);
-    
+
     Weapon w2(screenWidth / 2 - 100, screenHeight - 150);
 
     std::string weaponImagePath;
@@ -854,21 +895,23 @@ int main()
     {
         // Single Player Mode
         // Create and control one character (Player1)
-        Player1 player1("Player 1", screenWidth / 2 + 100  , screenHeight - 100);
+        Player1 player1("Player 1", screenWidth / 2 + 100, screenHeight - 100);
 
         // Set initial direction to right
         int direction = 1;
+        // Get the current time
+        time_t startTime = time(nullptr);
 
         // Game loop
         while (true)
         {
             // Clear the screen
-            //double buffering
-            setactivepage(page);           
-            setvisualpage(1-page);
+            // double buffering
+            setactivepage(page);
+            setvisualpage(1 - page);
 
             readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
-           
+
             // Move and draw the obstacles
             obstacle1.undrawObstacle();
             obstacle1.moveRight();
@@ -881,7 +924,6 @@ int main()
             if (obstacle2.getPosition() <= 0)
                 obstacle2.setPosition(screenWidth - obstacleWidth);
             obstacle2.drawObstacle();
-
 
             // Move the weapon
             w1.move(5 * direction);
@@ -909,17 +951,26 @@ int main()
             // Update the character's position based on the direction
             player1.setPosition(player1.getPosition() + 5 * direction);
 
-            
-            //fruit 
+            // fruit
             for (int i = 0; i < numFruits; i++)
             {
                 fruits[i]->move();
                 fruits[i]->draw();
             }
             // Draw the character
-            player1.drawCharacter();            
-            
+            player1.drawCharacter();
+
             page = 1 - page;
+
+            // Get the current time
+            time_t currentTime = time(nullptr);
+
+            // Calculate the elapsed time in seconds
+            double elapsedTime = difftime(currentTime, startTime);
+
+            // Break the loop after approximately 30 seconds
+            if (elapsedTime >= 60.0)
+                break;
             // Delay for smooth animation
             delay(40);
         }
@@ -933,14 +984,15 @@ int main()
 
         // Game loop
         int page2 = 0;
+        // Get the current time
+        time_t startTime = time(nullptr);
         while (true)
         {
-            //double buffering
-            setactivepage(page2);           
-            setvisualpage(1-page2);
+            // double buffering
+            setactivepage(page2);
+            setvisualpage(1 - page2);
 
             readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
-            
 
             // Move and draw the obstacles
             obstacle1.undrawObstacle();
@@ -1003,7 +1055,7 @@ int main()
             // Redraw the weapon
             w1.update();
             w1.draw();
-            //fruit 
+            // fruit
             for (int i = 0; i < numFruits; i++)
             {
                 fruits[i]->move();
@@ -1014,6 +1066,16 @@ int main()
             player2.drawCharacter();
 
             page2 = 1 - page2;
+
+            // Get the current time
+            time_t currentTime = time(nullptr);
+
+            // Calculate the elapsed time in seconds
+            double elapsedTime = difftime(currentTime, startTime);
+
+            // Break the loop after approximately 30 seconds
+            if (elapsedTime >= 60.0)
+                break;
 
             // Delay for smooth animation
             delay(40);
