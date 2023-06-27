@@ -1,52 +1,54 @@
 #include <graphics.h>
-#include <string>
 #include "Character.h"
-#include "ImpleCharacter.cpp"
-#include "weapon.cpp"
-#include "weapon.h"
-#include "bullet.h"
-#include "bullet.cpp"
+#include "Weapon.h"
 
-using namespace std;
+class Player1 : public Character {
+public:
+    Player1(const std::string& playerName, int playerPositionX, int playerPositionY)
+        : Character(playerName, playerPositionX, playerPositionY) {}
+
+    void drawCharacter() override {
+        int x = positionX;
+        int y = positionY;
+
+        // Draw the character using graphics library or other method
+        readimagefile("cat.jpg", x, y, x + 150, y + 150);
+    }
+
+    void moveLeft() override {
+        positionX -= 5;
+    }
+
+    void moveRight() override {
+        positionX += 5;
+    }
+};
+
+class Player2 : public Character {
+public:
+    Player2(const std::string& playerName, int playerPositionX, int playerPositionY)
+        : Character(playerName, playerPositionX, playerPositionY) {}
+
+    void drawCharacter() override {
+        int x = positionX;
+        int y = positionY;
+
+        // Draw the character using graphics library or other method
+        readimagefile("cat.jpg", x, y, x + 150, y + 150);
+    }
+
+    void moveLeft() override {
+        positionX -= 5;
+    }
+
+    void moveRight() override {
+        positionX += 5;
+    }
+};
 
 void displayMenu()
 {
-    int screenWidth = getmaxwidth();
-    int screenHeight = getmaxheight();
-    initwindow(screenWidth, screenHeight, "Game Start");
-
-    // Set background color
-    setbkcolor(BLACK);
-
-    // Clear the screen
-    cleardevice();
-
-    // Set text properties
-    settextstyle(BOLD_FONT, HORIZ_DIR, 4);
-
-    // Display title
-    outtextxy(screenWidth / 2 - 240, screenHeight / 2 - 100, "Welcome to Fruit Shooting");
-
-    // Set text properties for instructions
-    settextstyle(BOLD_FONT, HORIZ_DIR, 2);
-
-    // Display instructions
-    outtextxy(screenWidth / 2 - 100, screenHeight / 2 + 50, "Click to Start");
-
-    // Wait for mouse click
-    while (!ismouseclick(WM_LBUTTONDOWN))
-    {
-        delay(100);
-    }
-
-    // Clear the mouse click event
-    clearmouseclick(WM_LBUTTONDOWN);
-
-    // Delay to allow the graphics window to refresh
-    delay(200);
-
-    // Close the graphics window
-    closegraph();
+    // Display menu implementation
 }
 
 int main()
@@ -65,17 +67,13 @@ int main()
     int size = imagesize(0, 0, imageWidth, imageHeight);
     background = new char[size];
 
-    // Load the image from the file and scale it to full screen
-    readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
-    getimage(0, 0, imageWidth - 1, imageHeight - 1, background);
-
-    int character2X = screenWidth / 2; // start at the middle of screen
+    int character2X = screenWidth / 2; // start at the middle of the screen
     int character2Y = screenHeight - 230;
-    int character1X = screenWidth / 2; // start at the middle of screen
+    int character1X = screenWidth / 2; // start at the middle of the screen
     int character1Y = screenHeight - 230;
 
-    Character character2("Player", character2X, character2Y);
-    Character character3("Player2", character1X, character1Y);
+    Player1 player1("Player1", character2X, character2Y);
+    Player2 player2("Player2", character1X, character1Y);
 
     Weapon w1(screenWidth / 2, screenHeight - 100);
     char ch;
@@ -84,42 +82,29 @@ int main()
 
     while (true)
     {
-<<<<<<< HEAD
-        delay(200);
+        delay(40);
         setactivepage(1);
         cleardevice();
-        // Update character 2 position
-       
-        if (character2.getPosition() >= screenWidth){
-            character2.moveLeft();
-            character2.drawCharacter();}
-        else{
-            character2.moveRight();
-            character2.drawCharacter();
-        }
 
-         if (character3.getPosition() >= screenWidth)
-            character3.moveRight();
-            
-        else {
-            character3.moveLeft();
-            
-        }
-        // Draw character 2 at the updated position
-        
-=======
-        //delay(40);
-        cleardevice();
-        setactivepage(1);
+        // Update player 1 position
+        if (player1.getPosition() >= screenWidth)
+            player1.moveLeft();
+        else
+            player1.moveRight();
 
-        // Move the characters
-        character2.moveRight();
-        character3.moveLeft();
+        // Update player 2 position
+        if (player2.getPosition() <= 0)
+            player2.moveRight();
+        else
+            player2.moveLeft();
 
-        // Draw the characters
-        character2.drawCharacter();
->>>>>>> 71a349187ab3249542f005041c491b9c9d0a07d4
-        character3.drawCharacter();
+        // Draw player 1 at the updated position
+        player1.drawCharacter();
+
+        // Draw player 2 at the updated position
+        player2.drawCharacter();
+
+        setvisualpage(1);
 
         // Move the weapon
         w1.move(5 * direction);
@@ -131,7 +116,7 @@ int main()
         w1.doAction();
 
         if (kbhit())
-        {
+                {
             ch = getch();
 
             if (ch == 27)
@@ -139,18 +124,16 @@ int main()
             else if (ch == ' ')
                 w1.shoot();
         }
-
-        // Draw the background image
-        putimage(0, 0, background, COPY_PUT);
+        setactivepage(1);
 
         // Redraw the weapon
+        cleardevice();
         w1.update();
         w1.draw();
-
-        setvisualpage(1);
-        delay(100);
     }
 
     closegraph();
     return 0;
 }
+
+       

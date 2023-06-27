@@ -3,29 +3,22 @@
 
 #include <string>
 
-using namespace std;
-class Character
-{
-
-private:
-    string playerName;
+class Character {
+protected:
+    std::string playerName;
     int positionX;
     int positionY;
-    int size;
 
 public:
-    Character(const string &playerName, int playerPositionX, int playerPositionY);
-    //display-related method
-    void drawCharacter();
+    Character(const std::string& playerName, int playerPositionX, int playerPositionY);
+    virtual ~Character() {}
 
-    //action-related method
-    void moveLeft();
-    void moveRight();
-    
-    //position-related method
-    int getPosition() const;
     void setPosition(int x);
+    int getPosition() const;
     int getY() const;
+    virtual void drawCharacter() = 0;
+    virtual void moveLeft() = 0;
+    virtual void moveRight() = 0;
 };
 
 #endif
