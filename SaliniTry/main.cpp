@@ -16,7 +16,7 @@ int main()
 
     int direction = 1 ;
 
-	//w1.draw();
+	w1.draw();
 
 	while (true)
 	{
