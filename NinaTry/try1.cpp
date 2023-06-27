@@ -328,7 +328,7 @@ const int screenWidth = getmaxwidth();
 const int screenHeight = getmaxheight();
 const int fruitWidth = 200;
 const int fruitHeight = 50;
-const int fruitSpeed = 30;
+const int fruitSpeed = 40;
 const int numFruits = 10;
 
 class Fruit
@@ -792,8 +792,8 @@ int chooseWeaponPage()
 }
 
 bool checkCollision(Fruit* fruit, Bullet* bullet) {
-    int fruitLeft = fruit->setX() - fruitWidth / 2;
-    int fruitRight = fruit->setX() + fruitWidth / 2;
+    int fruitLeft = fruit->setX(xPos) - fruitWidth / 2;
+    int fruitRight = fruit->setX(xPos) + fruitWidth / 2;
     int fruitTop = fruit->setY() - fruitHeight / 2;
     int fruitBottom = fruit->setY() + fruitHeight / 2;
 
@@ -802,8 +802,7 @@ bool checkCollision(Fruit* fruit, Bullet* bullet) {
     int bulletTop = bullet->getY() - bullet->getSize() / 2;
     int bulletBottom = bullet->getY() + bullet->getSize() / 2;
 
-    if (bulletRight >= fruitLeft && bulletLeft <= fruitRight &&
-        bulletBottom >= fruitTop && bulletTop <= fruitBottom) {
+    if (bulletBottom >= fruitTop && bulletTop <= fruitBottom) {
         return true; // Collision detected
     }
 
@@ -826,6 +825,8 @@ int main()
     // Weapon page
     int choice = 1;
     // choice = chooseWeaponPage();
+
+    Weapon weaponobj ;
 
     // start weapon
     Weapon w1(screenWidth / 2, screenHeight - 230);
@@ -908,7 +909,7 @@ int main()
                 fruits[i]->move();
                 fruits[i]->draw();
 
-                if (checkCollision(fruits[i], Weapon.getBullet())) {
+                if (checkCollision(fruits[i], weaponobj.getActive())) {
                 delete fruits[i];
                 fruits[i] = nullptr;
                 }
@@ -987,7 +988,7 @@ int main()
                 fruits[i]->move();
                 fruits[i]->draw();
 
-                if (checkCollision(fruits[i], Weapon.getBullet())) {
+                if (checkCollision(fruits[i], weaponobj.getActive())) {
                 delete fruits[i];
                 fruits[i] = nullptr;
                 }
