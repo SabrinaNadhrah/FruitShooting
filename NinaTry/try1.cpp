@@ -792,8 +792,8 @@ int chooseWeaponPage()
 }
 
 bool checkCollision(Fruit* fruit, Bullet* bullet) {
-    int fruitLeft = fruit->setX(xPos) - fruitWidth / 2;
-    int fruitRight = fruit->setX(xPos) + fruitWidth / 2;
+    int fruitLeft = fruit->setX() - fruitWidth / 2;
+    int fruitRight = fruit->setX() + fruitWidth / 2;
     int fruitTop = fruit->setY() - fruitHeight / 2;
     int fruitBottom = fruit->setY() + fruitHeight / 2;
 
@@ -826,7 +826,7 @@ int main()
     int choice = 1;
     // choice = chooseWeaponPage();
 
-    Weapon weaponobj ;
+   Bullet weaponobj ;
 
     // start weapon
     Weapon w1(screenWidth / 2, screenHeight - 230);
