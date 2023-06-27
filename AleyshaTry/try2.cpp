@@ -88,10 +88,33 @@ void WeaponPage(){
         readimagefile("cannon.jpg", screenWidth / 2 - 100, screenHeight / 2 + 250, screenWidth / 2 + 100, screenHeight / 2 + 350);
         outtextxy(screenWidth / 2 - 40, screenHeight / 2 + 360, "Cannon");
 
+        if (option != 0)
+            break;
+        //delay(100);
+    }
+     // Clear the screen
+    cleardevice();
+
+    // Display the selected option
+    /*string weapon;
+    if (option == 1)
+        weapon = "Rifle";
+    else if (option == 2)
+        weapon = "Gun";
+    else if (option == 3)
+        weapon = "Cannon";
+
+    settextstyle(BOLD_FONT, HORIZ_DIR, 4);
+    outtextxy(screenWidth / 2 - 100, screenHeight / 2 - 50, "You chose:");
+    //outtextxy(screenWidth / 2 - 80, screenHeight / 2 + 50, weapon);*/
+
+    // Wait for a key press
+    while (!kbhit())
+    {
         delay(100);
     }
 
-    closegraph();
+    /*closegraph();
 
     // Use the selected option here
     if (option == 1) {
@@ -103,7 +126,7 @@ void WeaponPage(){
     } else if (option == 3) {
         std::cout << "Cannon selected" << std::endl;
         // Add code for Cannon game
-    }
+    }*/
 
 }
 // Class Character
@@ -506,6 +529,8 @@ void Obstacle::undrawObstacle() const {
 
 int main()
 {
+    int gd = DETECT,gm;
+    initgraph(&gd, &gm, "");
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
     initwindow(screenWidth, screenHeight, "Game Start");
@@ -514,7 +539,7 @@ int main()
     //Start Page
     displayMenu();
     //Weapon page
-  // WeaponPage(); //belum link
+    WeaponPage(); //belum link
 
 
     Fruit* fruits[numFruits];
