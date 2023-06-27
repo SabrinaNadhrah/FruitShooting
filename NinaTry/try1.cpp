@@ -32,7 +32,7 @@ void displayMenu()
     // Wait for mouse click
     while (!ismouseclick(WM_LBUTTONDOWN))
     {
-        delay(100);
+        delay(50);
     }
 
     // Clear the mouse click event
@@ -41,6 +41,7 @@ void displayMenu()
     // Delay to allow the graphics window to refresh
     delay(200);
 }
+
 void WeaponPage()
 {
 
@@ -117,6 +118,7 @@ void WeaponPage()
         // Add code for Cannon game
     }
 }
+
 // Class Character
 class Character
 {
@@ -466,6 +468,7 @@ void BigFruit::draw()
     setfillstyle(SOLID_FILL, RED);
     fillellipse(x, y, size, size);
 }
+
 void initializeFruits(Fruit *fruits[])
 {
     for (int i = 0; i < numFruits; i++)
@@ -494,6 +497,7 @@ void deleteFruits(Fruit *fruits[])
     for (int i = 0; i < numFruits; i++)
         delete fruits[i];
 }
+
 // obstacle class
 class Obstacle
 {
@@ -787,10 +791,29 @@ int chooseWeaponPage()
     return choice;
 }
 
+bool checkCollision(Fruit* fruit, Bullet* bullet) {
+    int fruitLeft = fruit->setX() - fruitWidth / 2;
+    int fruitRight = fruit->setX() + fruitWidth / 2;
+    int fruitTop = fruit->setY() - fruitHeight / 2;
+    int fruitBottom = fruit->setY() + fruitHeight / 2;
+
+    //int bulletLeft = bullet->setX() - bullet->getSize() / 2;
+    //int bulletRight = bullet->setX() + bullet->getSize() / 2;
+    int bulletTop = bullet->getY() - bullet->getSize() / 2;
+    int bulletBottom = bullet->getY() + bullet->getSize() / 2;
+
+    if (bulletRight >= fruitLeft && bulletLeft <= fruitRight &&
+        bulletBottom >= fruitTop && bulletTop <= fruitBottom) {
+        return true; // Collision detected
+    }
+
+    return false; // No collision
+}
+
 int main()
 {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, "");
+    // srand(static_cast<unsigned>(time(nullptr)));
+    int page = 0;
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
     initwindow(screenWidth, screenHeight, "Game Start");
@@ -861,9 +884,12 @@ int main()
         while (true)
         {
             // Clear the screen
-            cleardevice();
-            // setactivepage;
+            // double buffering
+            setactivepage(page);
+            setvisualpage(1 - page);
+
             readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
+
             // Move and draw the obstacles
             obstacle1.undrawObstacle();
             obstacle1.moveRight();
@@ -881,6 +907,11 @@ int main()
             {
                 fruits[i]->move();
                 fruits[i]->draw();
+
+                if (checkCollision(fruits[i], Weapon.getBullet())) {
+                delete fruits[i];
+                fruits[i] = nullptr;
+                }
             }
 
             // Move the weapon
@@ -927,6 +958,7 @@ int main()
             // Draw the character
             player1.drawCharacter();
 
+            page = 1 - page;
             // Delay for smooth animation
             delay(100);
         }
@@ -940,15 +972,25 @@ int main()
 
         // Game loop
         // Game loop
+        int page2 = 0;
         while (true)
         {
             // Clear the screen
-            cleardevice();
+            // double buffering
+
+            setactivepage(page2);
+            setvisualpage(1 - page2);
+
             readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
             for (int i = 0; i < numFruits; i++)
             {
                 fruits[i]->move();
                 fruits[i]->draw();
+
+                if (checkCollision(fruits[i], Weapon.getBullet())) {
+                delete fruits[i];
+                fruits[i] = nullptr;
+                }
             }
 
             // Move and draw the obstacles
@@ -1015,11 +1057,14 @@ int main()
             player1.drawCharacter();
             player2.drawCharacter();
 
+            page2 = 1 - page2;
+
             // Delay for smooth animation
             delay(100);
         }
     }
-
+    deleteFruits(fruits);
+    // free(imageBuffer);
     closegraph();
     return 0;
 }
