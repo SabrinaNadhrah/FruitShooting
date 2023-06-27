@@ -8,9 +8,7 @@ const int MAXBULLET = 100;
 class Weapon;
 
 class Bullet {
-    // Bullet class implementation remains the same
-    // ...
-    private:
+private:
     int x, y;
     int size;
     int color;
@@ -29,7 +27,6 @@ public:
     void undraw() const;
     void move();
     void reset();
-
 };
 
 class Weapon {
@@ -37,14 +34,12 @@ private:
     int x, y;
     int width, height;
     int color;
-    Bullet* bullets;
-    std::string imageFile; // Added member variable for image filename
+    Bullet* bullets; // Use the pointer to Bullet
+    std::string imageFilename; // Image filename for the weapon
 
 public:
-    Weapon(int _x = 0, int _y = 0, int _width = 150, int _height = 100, int _color = BLACK, const std::string& _imageFile = "");
+    Weapon(int _x = 0, int _y = 0, int _width = 150, int _height = 100, int _color = BLACK);
 
-    // Other member functions remain the same
-    // ...
     int getX() const;
     int getY() const;
     int getWidth() const;
@@ -57,33 +52,146 @@ public:
     void doAction();
     int getPosition() const;
     void update();
-
+    void setImageFilename(const std::string& filename); // Set image filename for the weapon
 };
+
+// Implement the Bullet class methods
+
+Bullet::Bullet(int _x, int _y, int _size, int _color, int _speed)
+    : x(_x), y(_y), size(_size), color(_color), speed(_speed), weapon(nullptr), active(false) {
+}
+
+int Bullet::getY() const {
+    return y;
+}
+
+bool Bullet::getActive() const {
+    return active;
+}
+
+void Bullet::setWeapon(Weapon* w) {
+    weapon = w;
+}
+
+void Bullet::draw() const {
+    setcolor(color);
+    setfillstyle(SOLID_FILL, color);
+    fillellipse(x, y, size, size);
+}
+
+void Bullet::undraw() const {
+    // Optional: Implement undraw functionality if needed
+}
+
+void Bullet::move() {
+    if (!active)
+        return;
+    undraw();
+    y -= speed;
+
+    if (y > 0)
+        draw();
+    else
+        active = false;
+}
+
+void Bullet::reset() {
+    x = weapon->getX() + weapon->getWidth() / 2;
+    y = weapon->getY() - size;
+    active = true;
+}
 
 // Implement the Weapon class methods
 
-Weapon::Weapon(int _x, int _y, int _width, int _height, int _color, const std::string& _imageFile)
-    : x(_x), y(_y), width(_width), height(_height), color(_color), imageFile(_imageFile) {
+Weapon::Weapon(int _x, int _y, int _width, int _height, int _color)
+    : x(_x), y(_y), width(_width), height(_height), color(_color) {
     bullets = new Bullet[MAXBULLET];
     for (int i = 0; i < MAXBULLET; i++) {
         bullets[i].setWeapon(this);
     }
 }
 
-void Weapon::draw() const {
-    readimagefile(imageFile.c_str(), x, y, x + width, y + height);
-    // Additional code if needed
+int Weapon::getX() const {
+    return x;
 }
 
-// Update the main function to use different images for each weapon
+int Weapon::getY() const {
+    return y;
+}
+
+int Weapon::getWidth() const {
+    return width;
+}
+
+int Weapon::getHeight() const {
+    return height;
+}
+
+void Weapon::shoot() {
+    int foundAt = -1;
+    for (int i = 0; i < MAXBULLET; i++) {
+        if (!bullets[i].getActive()) {
+            foundAt = i;
+            break;
+        }
+    }
+
+    if (foundAt != -1) {
+        bullets[foundAt].reset();
+        bullets[foundAt].draw();
+    }
+}
+
+void Weapon::draw() const {
+    if (!imageFilename.empty()) {
+        readimagefile(imageFilename.c_str(), x, y, x + width, y + height);
+    } else {
+        setcolor(color);
+        setfillstyle(SOLID_FILL, color);
+        rectangle(x, y, x + width, y + height);
+        floodfill(x + width / 2, y + height / 2, color);
+    }
+}
+
+void Weapon::undraw() const {
+    if (!imageFilename.empty()) {
+        // Optional: Implement undraw functionality for image if needed
+    } else {
+        setcolor(BLACK);
+        setfillstyle(SOLID_FILL, BLACK);
+        rectangle(x, y, x + width, y + height);
+        floodfill(x + width / 2, y + height / 2, BLACK);
+    }
+}
+
+void Weapon::move(int dx) {
+    undraw();
+    x += dx;
+    draw();
+}
+
+void Weapon::doAction() {
+    for (int i = 0; i < MAXBULLET; i++) {
+        bullets[i].move();
+    }
+}
+
+int Weapon::getPosition() const {
+    return x;
+}
+
+void Weapon::update() {
+    // Optional: Implement update functionality if needed
+}
+
+void Weapon::setImageFilename(const std::string& filename) {
+    imageFilename = filename;
+}
 
 int main() {
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
-
-    initwindow(screenWidth, screenHeight, "Choose Your Weapon!");
-    setbkcolor(BLACK);
-    cleardevice();
+    initwindow(screenWidth, screenHeight, "Fruit Shooting");
 
     int option = 0;
     int mouseX, mouseY;
@@ -112,70 +220,58 @@ int main() {
         setfillstyle(SOLID_FILL, LIGHTGRAY);
 
         // Draw 1 player button with Rifle image
-        readimagefile("rifflee.jpg", screenWidth / 2 - 100, screenHeight / 2 - 50, screenWidth / 2 + 100, screenHeight / 2 + 50);
+        rectangle(screenWidth / 2 - 100, screenHeight / 2 - 50, screenWidth / 2 + 100, screenHeight / 2 + 50);
         outtextxy(screenWidth / 2 - 30, screenHeight / 2 + 60, "Rifle");
 
         // Draw 2 players button with Gun image
-        readimagefile("gunn.jpg", screenWidth / 2 - 100, screenHeight / 2 + 100, screenWidth / 2 + 100, screenHeight / 2 + 200);
-        outtextxy(screenWidth / 2 - 25, screenHeight / 2 + 210, "Gun");
+        rectangle(screenWidth / 2 - 100, screenHeight / 2 + 100, screenWidth / 2 + 100, screenHeight / 2 + 200);
+        outtextxy(screenWidth / 2 - 30, screenHeight / 2 + 210, "Gun");
 
         // Draw Cannon button with Cannon image
-        readimagefile("cannon.jpg", screenWidth / 2 - 100, screenHeight / 2 + 250, screenWidth / 2 + 100, screenHeight / 2 + 350);
-        outtextxy(screenWidth / 2 - 40, screenHeight / 2 + 360, "Cannon");
+        rectangle(screenWidth / 2 - 100, screenHeight / 2 + 250, screenWidth / 2 + 100, screenHeight / 2 + 350);
+        outtextxy(screenWidth / 2 - 30, screenHeight / 2 + 360, "Cannon");
 
-        delay(100);
+        delay(10);
+        cleardevice();
     }
 
-    closegraph();
-
-    // Use the selected option here
-    Weapon w1(screenWidth / 2, screenHeight - 230, 150, 100, BLACK, "");
-    // Use the selected option here
-    if (option == 1) {
-        std::cout << "Rifle selected" << std::endl;
-        Weapon w1(screenWidth / 2, screenHeight - 230, 150, 100, BLACK, "rifflee.jpg");
-        // Add code for 1 player game with Rifle
-        w1.draw();  // Draw the weapon on the screen
-    } else if (option == 2) {
-        std::cout << "Gun selected" << std::endl;
-        Weapon w1(screenWidth / 2, screenHeight - 230, 150, 100, BLACK, "gunn.jpg");
-        // Add code for 2 player game with Gun
-        w1.draw();  // Draw the weapon on the screen
-    } else if (option == 3) {
-        std::cout << "Cannon selected" << std::endl;
-        Weapon w1(screenWidth / 2, screenHeight - 230, 150, 100, BLACK, "cannon.jpg");
-        // Add code for Cannon game
-        w1.draw();  // Draw the weapon on the screen
+    // Create the weapon based on the user's selection
+    Weapon weapon;
+    switch (option) {
+        case 1:
+            weapon.setImageFilename("riffle.jpg"); // Set the image filename for the Rifle
+            break;
+        case 2:
+            weapon.setImageFilename("gunn.jpg"); // Set the image filename for the Gun
+            break;
+        case 3:
+            weapon.setImageFilename("cannon.jpg"); // Set the image filename for the Cannon
+            break;
     }
 
-    char ch;
-    int direction = 1;
+    weapon.draw();
 
     while (true) {
-        delay(40);
-
-        // Move the weapon
-        w1.move(5 * direction);
-
-        // Reverse direction if the weapon reaches the screen boundaries
-        if (w1.getPosition() <= 0 || w1.getPosition() >= (screenWidth - 155))
-            direction *= -1;
-
-        w1.doAction();
-
         if (kbhit()) {
-            ch = getch();
-
-            if (ch == 27)
-                break;
-            else if (ch == ' ')
-                w1.shoot();
+            char key = getch();
+            switch (key) {
+                case 'a':
+                case 'A':
+                    weapon.move(-20);
+                    break;
+                case 'd':
+                case 'D':
+                    weapon.move(20);
+                    break;
+                case ' ':
+                    weapon.shoot();
+                    break;
+            }
         }
 
-        // Redraw the weapon
+        weapon.doAction();
+        delay(10);
         cleardevice();
-        w1.update();
-        w1.draw();
     }
 
     closegraph();
