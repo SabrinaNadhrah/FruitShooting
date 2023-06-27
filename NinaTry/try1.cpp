@@ -688,8 +688,9 @@ void Bullet::reset()
 
 bool Bullet::checkCollision(const Fruit *fruit) const
 {
-    int fruitX = fruit->setX(int xPos);
-    int fruitY = fruit->setY(int yPos);
+    int *xPos, *yPos ;
+    int fruitX = fruit->setX( xPos);
+    int fruitY = fruit->setY( yPos);
     int fruitWidth = fruit->getWidth();
     int fruitHeight = fruit->getHeight();
 
