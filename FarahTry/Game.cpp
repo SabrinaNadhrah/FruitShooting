@@ -32,7 +32,7 @@ void displayMenu()
     // Wait for mouse click
     while (!ismouseclick(WM_LBUTTONDOWN))
     {
-        delay(100);
+        delay(50);
     }
 
     // Clear the mouse click event
@@ -41,6 +41,7 @@ void displayMenu()
     // Delay to allow the graphics window to refresh
     delay(200);
 }
+
 void WeaponPage()
 {
 
@@ -117,6 +118,7 @@ void WeaponPage()
         // Add code for Cannon game
     }
 }
+
 // Class Character
 class Character
 {
