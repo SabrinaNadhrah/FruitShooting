@@ -41,13 +41,12 @@ void displayMenu()
     // Delay to allow the graphics window to refresh
     delay(200);
 }
-void WeaponPage(){
 
+void WeaponPage() {
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
-    
-    setbkcolor(BLACK);
-    cleardevice();
+
+    initwindow(screenWidth, screenHeight, "Weapon Page");
 
     int option = 0;
     int mouseX, mouseY;
@@ -69,6 +68,9 @@ void WeaponPage(){
                 break;
             }
         }
+
+        setbkcolor(BLACK);
+        cleardevice();
 
         setcolor(WHITE);
         settextstyle(BOLD_FONT, HORIZ_DIR, 3);
@@ -92,19 +94,14 @@ void WeaponPage(){
 
     closegraph();
 
-    // Use the selected option here
-    if (option == 1) {
-        std::cout << "Rifle selected" << std::endl;
-        // Add code for 1 player game with Rifle
-    } else if (option == 2) {
-        std::cout << "Gun selected" << std::endl;
-        // Add code for 2 player game with Gun
-    } else if (option == 3) {
-        std::cout << "Cannon selected" << std::endl;
-        // Add code for Cannon game
-    }
+    // Process the selected option (1, 2, or 3)
+    // ...
 
+    // Example: Printing the selected option
+    printf("Selected option: %d\n", option);
 }
+
+
 // Class Character
 class Character {
 protected:
@@ -676,7 +673,7 @@ void Weapon::setImagePath(const std::string& path) {
 }
 
 
-int chooseWeaponPage() {
+/* int chooseWeaponPage() {
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
     initwindow(screenWidth, screenHeight, "Choose Weapon");
@@ -698,7 +695,7 @@ int chooseWeaponPage() {
 
     closegraph();
     return choice;
-}
+}*/
 
 int main()
 {
@@ -712,13 +709,14 @@ int main()
 
     int gameMode = selectMode();
     //Weapon page
-    int choice = chooseWeaponPage(); 
+    // int choice = 
+    WeaponPage(); 
 
     //start weapon
      Weapon w1(screenWidth / 2, screenHeight - 230);
     
     std::string weaponImagePath;
-    if (choice == 1) {
+    if (option == 1) {
         // Rifle
         weaponImagePath = "riffle.jpg";
     } else if (choice == 2) {
@@ -902,8 +900,6 @@ else if (player2.getPosition() + 150 > screenWidth)
     // Delay for smooth animation
     delay(100);
 }
-
-
     }
 
     closegraph();
