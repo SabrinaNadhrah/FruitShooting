@@ -42,83 +42,6 @@ void displayMenu()
     delay(200);
 }
 
-void WeaponPage()
-{
-
-    int screenWidth = getmaxwidth();
-    int screenHeight = getmaxheight();
-
-    setbkcolor(BLACK);
-    cleardevice();
-
-    int option = 0;
-    int mouseX, mouseY;
-
-    while (true)
-    {
-        if (ismouseclick(WM_LBUTTONDOWN))
-        {
-            clearmouseclick(WM_LBUTTONDOWN);
-            mouseX = mousex();
-            mouseY = mousey();
-
-            if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 - 50 && mouseY <= screenHeight / 2 + 50)
-            {
-                option = 1; // 1 player selected
-                break;
-            }
-            else if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 + 100 && mouseY <= screenHeight / 2 + 200)
-            {
-                option = 2; // 2 players selected
-                break;
-            }
-            else if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 + 250 && mouseY <= screenHeight / 2 + 350)
-            {
-                option = 3; // Cannon selected
-                break;
-            }
-        }
-
-        setcolor(WHITE);
-        settextstyle(BOLD_FONT, HORIZ_DIR, 3);
-        outtextxy(screenWidth / 2 - 80, screenHeight / 2 - 100, "Choose Your Weapon!");
-        setfillstyle(SOLID_FILL, LIGHTGRAY);
-
-        // Draw 1 player button with Rifle image
-        readimagefile("rifflee.jpg", screenWidth / 2 - 100, screenHeight / 2 - 50, screenWidth / 2 + 100, screenHeight / 2 + 50);
-        outtextxy(screenWidth / 2 - 30, screenHeight / 2 + 60, "Rifle");
-
-        // Draw 2 players button with Gun image
-        readimagefile("gunn.jpg", screenWidth / 2 - 100, screenHeight / 2 + 100, screenWidth / 2 + 100, screenHeight / 2 + 200);
-        outtextxy(screenWidth / 2 - 25, screenHeight / 2 + 210, "Gun");
-
-        // Draw Cannon button with Cannon image
-        readimagefile("cannon.jpg", screenWidth / 2 - 100, screenHeight / 2 + 250, screenWidth / 2 + 100, screenHeight / 2 + 350);
-        outtextxy(screenWidth / 2 - 40, screenHeight / 2 + 360, "Cannon");
-
-        delay(100);
-    }
-
-    closegraph();
-
-    // Use the selected option here
-    if (option == 1)
-    {
-        std::cout << "Rifle selected" << std::endl;
-        // Add code for 1 player game with Rifle
-    }
-    else if (option == 2)
-    {
-        std::cout << "Gun selected" << std::endl;
-        // Add code for 2 player game with Gun
-    }
-    else if (option == 3)
-    {
-        std::cout << "Cannon selected" << std::endl;
-        // Add code for Cannon game
-    }
-}
-
 // Class Character
 class Character
 {
@@ -328,7 +251,7 @@ const int screenWidth = getmaxwidth();
 const int screenHeight = getmaxheight();
 const int fruitWidth = 200;
 const int fruitHeight = 50;
-const int fruitSpeed = 40;
+const int fruitSpeed = 30;
 const int numFruits = 10;
 
 class Fruit
@@ -522,12 +445,12 @@ Obstacle::Obstacle(const std::string &obstacleName, int obstaclePositionX, int o
 
 void Obstacle::moveLeft()
 {
-    positionX -= 15;
+    positionX -= 10;
 }
 
 void Obstacle::moveRight()
 {
-    positionX += 15;
+    positionX += 10;
 }
 
 int Obstacle::getPosition() const
@@ -620,7 +543,7 @@ public:
 // Implement the Bullet class methods
 
 Bullet::Bullet(int _x, int _y, int _size, int _color, int _speed)
-    : x(_x), y(_y), size(_size), color(_color), speed(100), weapon(nullptr), active(false)
+    : x(_x), y(_y), size(_size), color(_color), speed(_speed), weapon(nullptr), active(false)
 {
 }
 
@@ -789,6 +712,44 @@ int chooseWeaponPage()
     return choice;
 }
 
+//aleysha
+class Score{
+    protected:
+        int sc;
+        Character *character;
+
+    public:
+        Score() : sc(0), character(nullptr) {}
+       // Score(int initialSc, Character *character) : character(initialSc), character(character) {}
+        Character *getCharacter() const {return character;}
+        void hitSmallFruit() {sc += 6; }
+        void hitMedFruit() { sc += 4; }
+        void hitBigFruit() { sc += 2; }
+        void hitObstacle() { sc -= 5; }
+        void setSc(int s){sc = s;}
+        int getSc() const {return sc; }
+};
+//aleysha
+void displayDashboard(int score, int timeRemaining){
+    settextstyle(BOLD_FONT, HORIZ_DIR, 3);
+    setcolor(BLACK);
+
+    string playerScore = "Score: " + to_string(score);
+    char scoreStr[playerScore.length() + 1];
+    strcpy(scoreStr, playerScore.c_str());
+
+    string timeStr = "Time: " + to_string(timeRemaining) + " s";
+    char timeRemainingStr[timeStr.length() + 1];
+    strcpy(timeRemainingStr, timeStr.c_str());
+
+    //int leftX = 10;
+    int centerX = getmaxx() / 2 - textwidth(scoreStr) / 2;
+    int rightX = getmaxx() - textwidth(timeRemainingStr) - 10;
+
+    outtextxy(centerX, 10, scoreStr);
+    outtextxy(rightX, 10, timeRemainingStr);
+}
+
 int main()
 {   
     int page = 0;
@@ -806,9 +767,8 @@ int main()
     // choice = chooseWeaponPage();
 
     // start weapon
-    Weapon w1(screenWidth / 2 + 100, screenHeight - 150);
-    
-    Weapon w2(screenWidth / 2 - 100, screenHeight - 150);
+    Weapon w1(screenWidth / 2, screenHeight - 230);
+    Weapon w2(screenWidth / 2, screenHeight - 230);
 
     std::string weaponImagePath;
     if (choice == 1)
@@ -854,7 +814,7 @@ int main()
     {
         // Single Player Mode
         // Create and control one character (Player1)
-        Player1 player1("Player 1", screenWidth / 2 + 100  , screenHeight - 100);
+        Player1 player1("Player 1", screenWidth / 2, screenHeight - 100);
 
         // Set initial direction to right
         int direction = 1;
@@ -882,6 +842,11 @@ int main()
                 obstacle2.setPosition(screenWidth - obstacleWidth);
             obstacle2.drawObstacle();
 
+            for (int i = 0; i < numFruits; i++)
+            {
+                fruits[i]->move();
+                fruits[i]->draw();
+            }
 
             // Move the weapon
             w1.move(5 * direction);
@@ -909,19 +874,27 @@ int main()
             // Update the character's position based on the direction
             player1.setPosition(player1.getPosition() + 5 * direction);
 
-            
-            //fruit 
-            for (int i = 0; i < numFruits; i++)
-            {
-                fruits[i]->move();
-                fruits[i]->draw();
-            }
+            /*
+                        // Check if the character reaches the screen boundaries
+                        if (player1.getPosition() < 0)
+                        {
+                            // Change direction to right if character reaches the left edge
+                            direction = 1;
+                            player1.setPosition(0); // Set character position to the left edge
+                        }
+                        else if (player1.getPosition() + 150 > screenWidth)
+                        {
+                            // Change direction to left if character reaches the right edge
+                            direction = -1;
+                            player1.setPosition(screenWidth - 150); // Set character position to the right edge
+                        } */
+
             // Draw the character
             player1.drawCharacter();            
             
             page = 1 - page;
             // Delay for smooth animation
-            delay(40);
+            delay(100);
         }
     }
     else if (gameMode == 2)
@@ -932,15 +905,22 @@ int main()
         Player2 player2("Player 2", screenWidth / 2 + 100, screenHeight - 100);
 
         // Game loop
+        // Game loop
         int page2 = 0;
         while (true)
         {
+            // Clear the screen
             //double buffering
+            
             setactivepage(page2);           
             setvisualpage(1-page2);
 
             readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
-            
+            for (int i = 0; i < numFruits; i++)
+            {
+                fruits[i]->move();
+                fruits[i]->draw();
+            }
 
             // Move and draw the obstacles
             obstacle1.undrawObstacle();
@@ -956,11 +936,10 @@ int main()
             obstacle2.drawObstacle();
             // Update the characters' positions
             player1.moveLeft();
-
-            w2.move(-20 * direction);
+            w2.move(-10 * direction);
 
             // Reverse direction if the weapon reaches the screen boundaries
-            if (w2.getPosition() <= 0 || w2.getPosition() >= (screenWidth - 150))
+            if (w2.getPosition() <= 0 || w2.getPosition() >= (screenWidth - 155))
                 direction *= -1;
 
             w2.doAction();
@@ -971,8 +950,8 @@ int main()
 
                 if (ch == 27)
                     break;
-                else if (ch == '\r')
-                    w2.shoot();
+                else if (ch == ' ')
+                    w1.shoot();
             }
 
             // Redraw the weapon
@@ -982,7 +961,7 @@ int main()
             player2.moveRight();
             // Move the weapon
 
-            w1.move(20 * direction);
+            w1.move(5 * direction);
 
             // Reverse direction if the weapon reaches the screen boundaries
             if (w1.getPosition() <= 0 || w1.getPosition() >= (screenWidth - 155))
@@ -1003,12 +982,6 @@ int main()
             // Redraw the weapon
             w1.update();
             w1.draw();
-            //fruit 
-            for (int i = 0; i < numFruits; i++)
-            {
-                fruits[i]->move();
-                fruits[i]->draw();
-            }
             // Draw the characters
             player1.drawCharacter();
             player2.drawCharacter();
@@ -1016,7 +989,7 @@ int main()
             page2 = 1 - page2;
 
             // Delay for smooth animation
-            delay(40);
+            delay(100);
         }
     }
 
