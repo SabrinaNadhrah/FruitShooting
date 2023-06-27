@@ -335,7 +335,6 @@ protected:
 public:
     Fruit(int s, int sc);
     virtual ~Fruit();
-
  
     virtual void move();
     virtual void draw() = 0;
@@ -527,10 +526,20 @@ void Obstacle::undrawObstacle() const {
     bar(x, y, x + width, y + height);
 }
 
+/*class Score{
+    protected:
+        int mark;
+        Chracter *character;
+
+    public:
+
+
+}*/
+
 int main()
 {
-    int gd = DETECT,gm;
-    initgraph(&gd, &gm, "");
+    //int gd = DETECT,gm;
+    //initgraph(&gd, &gm, "");
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
     initwindow(screenWidth, screenHeight, "Game Start");

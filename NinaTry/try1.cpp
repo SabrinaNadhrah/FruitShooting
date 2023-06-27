@@ -4,8 +4,6 @@
 
 using namespace std;
 
-#define MAXBULLET 10
-
 // Display Menu
 void displayMenu()
 {
@@ -43,7 +41,6 @@ void displayMenu()
     // Delay to allow the graphics window to refresh
     delay(200);
 }
-
 void WeaponPage()
 {
 
@@ -83,19 +80,19 @@ void WeaponPage()
 
         setcolor(WHITE);
         settextstyle(BOLD_FONT, HORIZ_DIR, 3);
-        outtextxy(screenWidth / 2 - 80, screenHeight / 2 - 50, "Choose Your Weapon!");
+        outtextxy(screenWidth / 2 - 80, screenHeight / 2 - 100, "Choose Your Weapon!");
         setfillstyle(SOLID_FILL, LIGHTGRAY);
 
         // Draw 1 player button with Rifle image
-        readimagefile("rifflee.jpg", screenWidth / 2 - 100, screenHeight / 2 - 30, screenWidth / 2 + 100, screenHeight / 2 + 30);
+        readimagefile("rifflee.jpg", screenWidth / 2 - 100, screenHeight / 2 - 50, screenWidth / 2 + 100, screenHeight / 2 + 50);
         outtextxy(screenWidth / 2 - 30, screenHeight / 2 + 60, "Rifle");
 
         // Draw 2 players button with Gun image
-        readimagefile("gunn.jpg", screenWidth / 2 - 100, screenHeight / 2 + 70, screenWidth / 2 + 100, screenHeight / 2 + 100);
+        readimagefile("gunn.jpg", screenWidth / 2 - 100, screenHeight / 2 + 100, screenWidth / 2 + 100, screenHeight / 2 + 200);
         outtextxy(screenWidth / 2 - 25, screenHeight / 2 + 210, "Gun");
 
         // Draw Cannon button with Cannon image
-        readimagefile("cannon.jpg", screenWidth / 2 - 100, screenHeight / 2 + 150, screenWidth / 2 + 100, screenHeight / 2 + 180);
+        readimagefile("cannon.jpg", screenWidth / 2 - 100, screenHeight / 2 + 250, screenWidth / 2 + 100, screenHeight / 2 + 350);
         outtextxy(screenWidth / 2 - 40, screenHeight / 2 + 360, "Cannon");
 
         delay(100);
@@ -329,7 +326,7 @@ const int screenWidth = getmaxwidth();
 const int screenHeight = getmaxheight();
 const int fruitWidth = 200;
 const int fruitHeight = 50;
-const int fruitSpeed = 5;
+const int fruitSpeed = 30;
 const int numFruits = 10;
 
 class Fruit
@@ -562,75 +559,95 @@ void Obstacle::undrawObstacle() const
     setfillstyle(SOLID_FILL, WHITE);
     bar(x, y, x + width, y + height);
 }
+// Weapon & bullet
+const int MAXBULLET = 100;
+
+// Forward declaration of the Weapon class
+class Weapon;
+
+class Bullet
+{
+private:
+    int x, y;
+    int size;
+    int color;
+    int speed;
+    bool active;
+    Weapon *weapon; // Forward declaration allows using the pointer to Weapon
+
+public:
+    Bullet(int _x = 0, int _y = 0, int _size = 10, int _color = BLUE, int _speed = 10);
+
+    int getY() const;
+    bool getActive() const;
+    void setWeapon(Weapon *w);
+
+    void draw() const;
+    void undraw() const;
+    void move();
+    void reset();
+};
 
 class Weapon
 {
 private:
-	int x, y;
-	int width, height;
-	int color;
-	// Bullet *bullets;
-	void drawHelper(int c) const;
+    int x, y;
+    int width, height;
+    int color;
+    Bullet *bullets; // Use the pointer to Bullet
+    std::string imagePath;
 
 public:
-	Weapon(int _x = 0, int _y = 0, int _width = 150, int _height = 100, int _color = BLACK);
-	int getX() const;
-	int getY() const;
-	int getWidth() const;
-	int getHeight() const;
-	void shoot();
-	void draw() const;
-	void undraw() const;
-	void move(int dx);
-	void doAction();
-    int getPosition() const ;
-    void update () ;
+    Weapon(int _x = 0, int _y = 0, int _width = 150, int _height = 100, int _color = BLACK);
+
+    int getX() const;
+    int getY() const;
+    int getWidth() const;
+    int getHeight() const;
+
+    void shoot();
+    void draw() const;
+    void undraw() const;
+    void move(int dx);
+    void doAction();
+    int getPosition() const;
+    void update();
+    void setImagePath(const std::string &path);
 };
 
-// bullet
-class Bullet
-{
-  private:
-	int x, y;			// Coordinates of the bullet on the screen
-	int size;			// size of bullet
-	int color;			// color of the bullet
-	int speed;			// speed at which the bullet moves
-	bool active;		// the bullet is active or not
-	Weapon *weapon;		// The weapon attribute is a pointer to the associated Weapon object
-	void drawHelper(int c) const;
+// Implement the Bullet class methods
 
-  public:
-	Bullet(int _x = 0, int _y = 0, int _size = 10, int _color = BLUE, int _speed = 10);
-	int getY() const;
-	bool getActive() const;
-	void setWeapon(Weapon *w);
-	void draw() const;
-	void undraw() const;
-	void move();
-	void reset();
-};
-
-Bullet::Bullet(int _x, int _y, int _size, int _color, int _speed) : x(_x), y(_y),
-                                                                    size(_size), color(_color),
-                                                                    speed(_speed),
-                                                                    weapon(NULL),
-                                                                    active(false)
+Bullet::Bullet(int _x, int _y, int _size, int _color, int _speed)
+    : x(_x), y(_y), size(_size), color(_color), speed(_speed), weapon(nullptr), active(false)
 {
 }
 
-int Bullet::getY() const { return y; }
-bool Bullet::getActive() const { return active; }
-void Bullet::setWeapon(Weapon *w) { weapon = w ; }
-
-void Bullet::drawHelper(int c) const
+int Bullet::getY() const
 {
-    setcolor(c);
-    setfillstyle(SOLID_FILL, c);
+    return y;
+}
+
+bool Bullet::getActive() const
+{
+    return active;
+}
+
+void Bullet::setWeapon(Weapon *w)
+{
+    weapon = w;
+}
+
+void Bullet::draw() const
+{
+    setcolor(color);
+    setfillstyle(SOLID_FILL, color);
     fillellipse(x, y, size, size);
 }
 
-void Bullet::draw() const { drawHelper(color); }
-void Bullet::undraw() const { drawHelper(0); }
+void Bullet::undraw() const
+{
+    // Optional: Implement undraw functionality if needed
+}
 
 void Bullet::move()
 {
@@ -652,26 +669,37 @@ void Bullet::reset()
     active = true;
 }
 
-// weapon
+// Implement the Weapon class methods
 
-Weapon::Weapon(int _x, int _y, int _width, int _height, int _color) : x(_x), y(_y),
-                                                                            width(_width), 
-                                                                            height(_height),
-                                                                            color(_color)
-                                                                            
+Weapon::Weapon(int _x, int _y, int _width, int _height, int _color)
+    : x(_x), y(_y), width(_width), height(_height), color(_color)
 {
-    int bullets = new Bullet[MAXBULLET];
+    bullets = new Bullet[MAXBULLET];
     for (int i = 0; i < MAXBULLET; i++)
+    {
         bullets[i].setWeapon(this);
-   /*for (Bullet* bullet : bullets)
-        bullet->setWeapon(this);
-        */
+    }
 }
 
-int Weapon::getX() const { return x; }
-int Weapon::getY() const { return y; }
-int Weapon::getWidth() const { return width; }
-int Weapon::getHeight() const { return height; }
+int Weapon::getX() const
+{
+    return x;
+}
+
+int Weapon::getY() const
+{
+    return y;
+}
+
+int Weapon::getWidth() const
+{
+    return width;
+}
+
+int Weapon::getHeight() const
+{
+    return height;
+}
 
 void Weapon::shoot()
 {
@@ -685,21 +713,23 @@ void Weapon::shoot()
         }
     }
 
-    if (foundAt != -1){
+    if (foundAt != -1)
+    {
         bullets[foundAt].reset();
         bullets[foundAt].draw();
     }
 }
 
-void Weapon::drawHelper(int c) const
+void Weapon::draw() const
 {
-    setcolor(c);
-    setfillstyle(SOLID_FILL, c);
-    bar(x, y, x + width, y + height);
+    readimagefile(imagePath.c_str(), x, y, x + width, y + height);
 }
 
-void Weapon::draw() const { drawHelper(color); }
-void Weapon::undraw() const { drawHelper(0); }
+void Weapon::undraw() const
+{
+    // Optional: Implement undraw functionality if needed
+}
+
 void Weapon::move(int dx)
 {
     undraw();
@@ -710,21 +740,57 @@ void Weapon::move(int dx)
 void Weapon::doAction()
 {
     for (int i = 0; i < MAXBULLET; i++)
+    {
         bullets[i].move();
+    }
 }
 
-int Weapon::getPosition() const 
+int Weapon::getPosition() const
 {
-    return x ;
+    return x;
 }
 
 void Weapon::update()
 {
+    // Optional: Implement update functionality if needed
+}
 
+void Weapon::setImagePath(const std::string &path)
+{
+    imagePath = path;
+}
+
+int chooseWeaponPage()
+{
+    int screenWidth = getmaxwidth();
+    int screenHeight = getmaxheight();
+    initwindow(screenWidth, screenHeight, "Choose Weapon");
+
+    // Display the available weapons and let the player choose
+    int choice = 1;
+    while (choice < 1 || choice > 3)
+    {
+        cleardevice();
+        outtextxy(screenWidth / 2 - 50, screenHeight / 2 - 30, "Choose a Weapon:");
+        outtextxy(screenWidth / 2 - 60, screenHeight / 2, "1. Rifle");
+        outtextxy(screenWidth / 2 - 60, screenHeight / 2 + 20, "2. Cannon");
+        outtextxy(screenWidth / 2 - 60, screenHeight / 2 + 40, "3. Gun");
+
+        char ch = getch();
+        if (ch >= '1' && ch <= '3')
+        {
+            choice = ch - '0';
+        }
+    }
+
+    closegraph();
+    return choice;
 }
 
 int main()
 {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, "");
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
     initwindow(screenWidth, screenHeight, "Game Start");
@@ -732,8 +798,39 @@ int main()
 
     // Start Page
     displayMenu();
+    // select gamemode
+    int gameMode = selectMode();
     // Weapon page
-    WeaponPage(); // belum link
+    int choice = 1;
+    // choice = chooseWeaponPage();
+
+    // start weapon
+    Weapon w1(screenWidth / 2, screenHeight - 230);
+    Weapon w2(screenWidth / 2, screenHeight - 230);
+
+    std::string weaponImagePath;
+    if (choice == 1)
+    {
+        // Rifle
+        weaponImagePath = "riffle.jpg";
+    }
+    else if (choice == 2)
+    {
+        // Cannon
+        weaponImagePath = "cannon.jpg";
+    }
+    else if (choice == 3)
+    {
+        // Gun
+        weaponImagePath = "gunn.jpg";
+    }
+    w1.setImagePath(weaponImagePath);
+    w2.setImagePath(weaponImagePath);
+
+    char ch;
+
+    int direction = 1;
+    // end weapon
 
     Fruit *fruits[numFruits];
     initializeFruits(fruits);
@@ -750,7 +847,6 @@ int main()
     Obstacle obstacle1("Obstacle1", obstacle1X, obstacle1Y, obstacleWidth, obstacleHeight);
     Obstacle obstacle2("Obstacle2", obstacle2X, obstacle2Y, obstacleWidth, obstacleHeight);
     // end boom
-    int gameMode = selectMode();
 
     if (gameMode == 1)
     {
@@ -766,7 +862,7 @@ int main()
         {
             // Clear the screen
             cleardevice();
-            setactivepage;
+            // setactivepage;
             readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
             // Move and draw the obstacles
             obstacle1.undrawObstacle();
@@ -787,22 +883,46 @@ int main()
                 fruits[i]->draw();
             }
 
+            // Move the weapon
+            w1.move(5 * direction);
+
+            // Reverse direction if the weapon reaches the screen boundaries
+            if (w1.getPosition() <= 0 || w1.getPosition() >= (screenWidth - 155))
+                direction *= -1;
+
+            w1.doAction();
+
+            if (kbhit())
+            {
+                ch = getch();
+
+                if (ch == 27)
+                    break;
+                else if (ch == ' ')
+                    w1.shoot();
+            }
+
+            // Redraw the weapon
+            w1.update();
+            w1.draw();
+
             // Update the character's position based on the direction
             player1.setPosition(player1.getPosition() + 5 * direction);
 
-            // Check if the character reaches the screen boundaries
-            if (player1.getPosition() < 0)
-            {
-                // Change direction to right if character reaches the left edge
-                direction = 1;
-                player1.setPosition(0); // Set character position to the left edge
-            }
-            else if (player1.getPosition() + 150 > screenWidth)
-            {
-                // Change direction to left if character reaches the right edge
-                direction = -1;
-                player1.setPosition(screenWidth - 150); // Set character position to the right edge
-            }
+            /*
+                        // Check if the character reaches the screen boundaries
+                        if (player1.getPosition() < 0)
+                        {
+                            // Change direction to right if character reaches the left edge
+                            direction = 1;
+                            player1.setPosition(0); // Set character position to the left edge
+                        }
+                        else if (player1.getPosition() + 150 > screenWidth)
+                        {
+                            // Change direction to left if character reaches the right edge
+                            direction = -1;
+                            player1.setPosition(screenWidth - 150); // Set character position to the right edge
+                        } */
 
             // Draw the character
             player1.drawCharacter();
@@ -845,32 +965,52 @@ int main()
             obstacle2.drawObstacle();
             // Update the characters' positions
             player1.moveLeft();
+            w2.move(-10 * direction);
+
+            // Reverse direction if the weapon reaches the screen boundaries
+            if (w2.getPosition() <= 0 || w2.getPosition() >= (screenWidth - 155))
+                direction *= -1;
+
+            w2.doAction();
+
+            if (kbhit())
+            {
+                ch = getch();
+
+                if (ch == 27)
+                    break;
+                else if (ch == ' ')
+                    w1.shoot();
+            }
+
+            // Redraw the weapon
+            w2.update();
+            w2.draw();
+
             player2.moveRight();
+            // Move the weapon
 
-            // Check if Player1 reaches the left or right edge
-            if (player1.getPosition() <= 0)
-            {
-                player1.moveRight();    // Reverse direction
-                player1.setPosition(0); // Set character position to the left edge
-            }
-            else if (player1.getPosition() + 150 > screenWidth)
-            {
-                player1.moveLeft();                     // Reverse direction
-                player1.setPosition(screenWidth - 150); // Set character position to the right edge
-            }
+            w1.move(5 * direction);
 
-            // Check if Player2 reaches the left or right edge
-            if (player2.getPosition() <= 0)
+            // Reverse direction if the weapon reaches the screen boundaries
+            if (w1.getPosition() <= 0 || w1.getPosition() >= (screenWidth - 155))
+                direction *= -1;
+
+            w1.doAction();
+
+            if (kbhit())
             {
-                player2.moveRight();    // Reverse direction
-                player2.setPosition(0); // Set character position to the left edge
-            }
-            else if (player2.getPosition() + 150 > screenWidth)
-            {
-                player2.moveLeft();                     // Reverse direction
-                player2.setPosition(screenWidth - 150); // Set character position to the right edge
+                ch = getch();
+
+                if (ch == 27)
+                    break;
+                else if (ch == ' ')
+                    w1.shoot();
             }
 
+            // Redraw the weapon
+            w1.update();
+            w1.draw();
             // Draw the characters
             player1.drawCharacter();
             player2.drawCharacter();
