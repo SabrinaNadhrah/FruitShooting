@@ -42,6 +42,83 @@ void displayMenu()
     delay(200);
 }
 
+void WeaponPage()
+{
+
+    int screenWidth = getmaxwidth();
+    int screenHeight = getmaxheight();
+
+    setbkcolor(BLACK);
+    cleardevice();
+
+    int option = 0;
+    int mouseX, mouseY;
+
+    while (true)
+    {
+        if (ismouseclick(WM_LBUTTONDOWN))
+        {
+            clearmouseclick(WM_LBUTTONDOWN);
+            mouseX = mousex();
+            mouseY = mousey();
+
+            if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 - 50 && mouseY <= screenHeight / 2 + 50)
+            {
+                option = 1; // 1 player selected
+                break;
+            }
+            else if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 + 100 && mouseY <= screenHeight / 2 + 200)
+            {
+                option = 2; // 2 players selected
+                break;
+            }
+            else if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 + 250 && mouseY <= screenHeight / 2 + 350)
+            {
+                option = 3; // Cannon selected
+                break;
+            }
+        }
+
+        setcolor(WHITE);
+        settextstyle(BOLD_FONT, HORIZ_DIR, 3);
+        outtextxy(screenWidth / 2 - 80, screenHeight / 2 - 100, "Choose Your Weapon!");
+        setfillstyle(SOLID_FILL, LIGHTGRAY);
+
+        // Draw 1 player button with Rifle image
+        readimagefile("rifflee.jpg", screenWidth / 2 - 100, screenHeight / 2 - 50, screenWidth / 2 + 100, screenHeight / 2 + 50);
+        outtextxy(screenWidth / 2 - 30, screenHeight / 2 + 60, "Rifle");
+
+        // Draw 2 players button with Gun image
+        readimagefile("gunn.jpg", screenWidth / 2 - 100, screenHeight / 2 + 100, screenWidth / 2 + 100, screenHeight / 2 + 200);
+        outtextxy(screenWidth / 2 - 25, screenHeight / 2 + 210, "Gun");
+
+        // Draw Cannon button with Cannon image
+        readimagefile("cannon.jpg", screenWidth / 2 - 100, screenHeight / 2 + 250, screenWidth / 2 + 100, screenHeight / 2 + 350);
+        outtextxy(screenWidth / 2 - 40, screenHeight / 2 + 360, "Cannon");
+
+        delay(100);
+    }
+
+    closegraph();
+
+    // Use the selected option here
+    if (option == 1)
+    {
+        std::cout << "Rifle selected" << std::endl;
+        // Add code for 1 player game with Rifle
+    }
+    else if (option == 2)
+    {
+        std::cout << "Gun selected" << std::endl;
+        // Add code for 2 player game with Gun
+    }
+    else if (option == 3)
+    {
+        std::cout << "Cannon selected" << std::endl;
+        // Add code for Cannon game
+    }
+}
+
 // Class Character
 class Character
 {
@@ -251,7 +328,7 @@ const int screenWidth = getmaxwidth();
 const int screenHeight = getmaxheight();
 const int fruitWidth = 200;
 const int fruitHeight = 50;
-const int fruitSpeed = 30;
+const int fruitSpeed = 40;
 const int numFruits = 10;
 
 class Fruit
@@ -391,6 +468,7 @@ void BigFruit::draw()
     setfillstyle(SOLID_FILL, RED);
     fillellipse(x, y, size, size);
 }
+
 void initializeFruits(Fruit *fruits[])
 {
     for (int i = 0; i < numFruits; i++)
@@ -419,6 +497,7 @@ void deleteFruits(Fruit *fruits[])
     for (int i = 0; i < numFruits; i++)
         delete fruits[i];
 }
+
 // obstacle class
 class Obstacle
 {
@@ -712,46 +791,27 @@ int chooseWeaponPage()
     return choice;
 }
 
-//aleysha
-class Score{
-    protected:
-        int sc;
-        Character *character;
+bool checkCollision(Fruit* fruit, Bullet* bullet) {
+    int fruitLeft = fruit->setX(xPos) - fruitWidth / 2;
+    int fruitRight = fruit->setX(xPos) + fruitWidth / 2;
+    int fruitTop = fruit->setY(yPos) - fruitHeight / 2;
+    int fruitBottom = fruit->setY(yPos) + fruitHeight / 2;
 
-    public:
-        Score() : sc(0), character(nullptr) {}
-       // Score(int initialSc, Character *character) : character(initialSc), character(character) {}
-        Character *getCharacter() const {return character;}
-        void hitSmallFruit() {sc += 6; }
-        void hitMedFruit() { sc += 4; }
-        void hitBigFruit() { sc += 2; }
-        void hitObstacle() { sc -= 5; }
-        void setSc(int s){sc = s;}
-        int getSc() const {return sc; }
-};
-//aleysha
-void displayDashboard(int score, int timeRemaining){
-    settextstyle(BOLD_FONT, HORIZ_DIR, 3);
-    setcolor(BLACK);
+    //int bulletLeft = bullet->setX() - bullet->getSize() / 2;
+    //int bulletRight = bullet->setX() + bullet->getSize() / 2;
+    int bulletTop = bullet->getY() - bullet->getSize() / 2;
+    int bulletBottom = bullet->getY() + bullet->getSize() / 2;
 
-    string playerScore = "Score: " + to_string(score);
-    char scoreStr[playerScore.length() + 1];
-    strcpy(scoreStr, playerScore.c_str());
+    if (bulletBottom >= fruitTop && bulletTop <= fruitBottom) {
+        return true; // Collision detected
+    }
 
-    string timeStr = "Time: " + to_string(timeRemaining) + " s";
-    char timeRemainingStr[timeStr.length() + 1];
-    strcpy(timeRemainingStr, timeStr.c_str());
-
-    //int leftX = 10;
-    int centerX = getmaxx() / 2 - textwidth(scoreStr) / 2;
-    int rightX = getmaxx() - textwidth(timeRemainingStr) - 10;
-
-    outtextxy(centerX, 10, scoreStr);
-    outtextxy(rightX, 10, timeRemainingStr);
+    return false; // No collision
 }
 
 int main()
-{   
+{
+    // srand(static_cast<unsigned>(time(nullptr)));
     int page = 0;
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
@@ -765,6 +825,8 @@ int main()
     // Weapon page
     int choice = 1;
     // choice = chooseWeaponPage();
+
+    Weapon weaponobj ;
 
     // start weapon
     Weapon w1(screenWidth / 2, screenHeight - 230);
@@ -823,12 +885,12 @@ int main()
         while (true)
         {
             // Clear the screen
-            //double buffering
-            setactivepage(page);           
-            setvisualpage(1-page);
+            // double buffering
+            setactivepage(page);
+            setvisualpage(1 - page);
 
             readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
-           
+
             // Move and draw the obstacles
             obstacle1.undrawObstacle();
             obstacle1.moveRight();
@@ -846,6 +908,11 @@ int main()
             {
                 fruits[i]->move();
                 fruits[i]->draw();
+
+                if (checkCollision(fruits[i], weaponobj.getActive())) {
+                delete fruits[i];
+                fruits[i] = nullptr;
+                }
             }
 
             // Move the weapon
@@ -890,8 +957,8 @@ int main()
                         } */
 
             // Draw the character
-            player1.drawCharacter();            
-            
+            player1.drawCharacter();
+
             page = 1 - page;
             // Delay for smooth animation
             delay(100);
@@ -910,16 +977,21 @@ int main()
         while (true)
         {
             // Clear the screen
-            //double buffering
-            
-            setactivepage(page2);           
-            setvisualpage(1-page2);
+            // double buffering
+
+            setactivepage(page2);
+            setvisualpage(1 - page2);
 
             readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
             for (int i = 0; i < numFruits; i++)
             {
                 fruits[i]->move();
                 fruits[i]->draw();
+
+                if (checkCollision(fruits[i], weaponobj.getActive())) {
+                delete fruits[i];
+                fruits[i] = nullptr;
+                }
             }
 
             // Move and draw the obstacles
@@ -992,22 +1064,8 @@ int main()
             delay(100);
         }
     }
-
-    Score score;
-
-    // When a bullet hits a small fruit
-    score.hitSmallFruit();
-
-    // When a bullet hits a medium fruit
-    score.hitMedFruit();
-
-    // When a bullet hits a big fruit
-    score.hitBigFruit();
-
-    // When a bullet hits an obstacle
-    score.hitObstacle();
-
-
+    deleteFruits(fruits);
+    // free(imageBuffer);
     closegraph();
     return 0;
 }
