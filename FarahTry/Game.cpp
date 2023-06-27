@@ -788,7 +788,8 @@ int chooseWeaponPage()
 }
 
 int main()
-{
+{   
+    int page = 0;
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
     initwindow(screenWidth, screenHeight, "Game Start");
@@ -859,9 +860,12 @@ int main()
         while (true)
         {
             // Clear the screen
-            cleardevice();
-            // setactivepage;
+            //double buffering
+            setactivepage(page);           
+            setvisualpage(1-page);
+
             readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
+           
             // Move and draw the obstacles
             obstacle1.undrawObstacle();
             obstacle1.moveRight();
@@ -923,8 +927,9 @@ int main()
                         } */
 
             // Draw the character
-            player1.drawCharacter();
-
+            player1.drawCharacter();            
+            
+            page = 1 - page;
             // Delay for smooth animation
             delay(100);
         }
@@ -938,10 +943,15 @@ int main()
 
         // Game loop
         // Game loop
+        int page2 = 0;
         while (true)
         {
             // Clear the screen
-            cleardevice();
+            //double buffering
+            
+            setactivepage(page2);           
+            setvisualpage(1-page2);
+
             readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
             for (int i = 0; i < numFruits; i++)
             {
@@ -1012,6 +1022,8 @@ int main()
             // Draw the characters
             player1.drawCharacter();
             player2.drawCharacter();
+
+            page2 = 1 - page2;
 
             // Delay for smooth animation
             delay(100);
