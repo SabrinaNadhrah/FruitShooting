@@ -1,10 +1,106 @@
-#include <graphics.h>
+
 #include <iostream>
 #include <string>
-#include <ctime>
-#include <cstdlib>
+#include <graphics.h>
+
 
 using namespace std;
+
+class Score {
+private:
+    int max_value;
+    int high_score;
+    int current_score;
+    int deduction_count;
+    int marks_gained_count;
+
+public:
+    Score();
+
+    int getScore() const;
+    int getHighScore() const;
+    int getDeductionCount() const;
+    int getMarksGainedCount() const;
+
+    void updateScore(int marksGained, int deduction);
+
+    void drawScoreboard() const;
+};
+
+Score::Score() {
+    max_value = 100;
+    high_score = 0;
+    current_score = 0;
+    deduction_count = 0;
+    marks_gained_count = 0;
+}
+
+int Score::getScore() const {
+    return current_score;
+}
+
+int Score::getHighScore() const {
+    return high_score;
+}
+
+int Score::getDeductionCount() const {
+    return deduction_count;
+}
+
+int Score::getMarksGainedCount() const {
+    return marks_gained_count;
+}
+
+void Score::updateScore(int marksGained, int deduction) {
+    current_score += marksGained - deduction;
+
+    if (current_score > high_score) {
+        high_score = current_score;
+    }
+
+    if (deduction > 0) {
+        deduction_count++;
+    }
+
+    if (marksGained > 0) {
+        marks_gained_count++;
+    }
+}
+
+void Score::drawScoreboard() const {
+    
+    setcolor(WHITE);
+    setfillstyle(SOLID_FILL, WHITE);
+    bar(5, 5, 220, 80); // Example background rectangle
+   
+    
+
+    // Convert the score, deduction count, and marks gained count to strings
+    std::string scoreText = "Score: " + std::to_string(current_score);
+    std::string deductionText = "Deductions: " + std::to_string(deduction_count);
+    std::string marksGainedText = "Marks Gained: " + std::to_string(marks_gained_count);
+
+    // Convert the strings to char arrays
+    char scoreStr[50];
+    char deductionStr[50];
+    char marksGainedStr[50];
+    strcpy(scoreStr, scoreText.c_str());
+    strcpy(deductionStr, deductionText.c_str());
+    strcpy(marksGainedStr, marksGainedText.c_str());
+
+    setbkcolor(WHITE);
+    setcolor(BLACK); // Set the text color to black
+    settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
+    // Display the current score, deduction count, and marks gained count
+    outtextxy(8, 10, scoreStr);
+    outtextxy(8, 30, deductionStr);
+    outtextxy(8, 50, marksGainedStr);
+
+    // Close graphics window
+    getch();
+    closegraph();
+}
+
 
 // Display Menu
 void displayMenu()
@@ -42,83 +138,6 @@ void displayMenu()
 
     // Delay to allow the graphics window to refresh
     delay(200);
-}
-
-void WeaponPage()
-{
-
-    int screenWidth = getmaxwidth();
-    int screenHeight = getmaxheight();
-
-    setbkcolor(BLACK);
-    cleardevice();
-
-    int option = 0;
-    int mouseX, mouseY;
-
-    while (true)
-    {
-        if (ismouseclick(WM_LBUTTONDOWN))
-        {
-            clearmouseclick(WM_LBUTTONDOWN);
-            mouseX = mousex();
-            mouseY = mousey();
-
-            if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 - 50 && mouseY <= screenHeight / 2 + 50)
-            {
-                option = 1; // 1 player selected
-                break;
-            }
-            else if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 + 100 && mouseY <= screenHeight / 2 + 200)
-            {
-                option = 2; // 2 players selected
-                break;
-            }
-            else if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 + 250 && mouseY <= screenHeight / 2 + 350)
-            {
-                option = 3; // Cannon selected
-                break;
-            }
-        }
-
-        setcolor(WHITE);
-        settextstyle(BOLD_FONT, HORIZ_DIR, 3);
-        outtextxy(screenWidth / 2 - 80, screenHeight / 2 - 100, "Choose Your Weapon!");
-        setfillstyle(SOLID_FILL, LIGHTGRAY);
-
-        // Draw 1 player button with Rifle image
-        readimagefile("rifflee.jpg", screenWidth / 2 - 100, screenHeight / 2 - 50, screenWidth / 2 + 100, screenHeight / 2 + 50);
-        outtextxy(screenWidth / 2 - 30, screenHeight / 2 + 60, "Rifle");
-
-        // Draw 2 players button with Gun image
-        readimagefile("gunn.jpg", screenWidth / 2 - 100, screenHeight / 2 + 100, screenWidth / 2 + 100, screenHeight / 2 + 200);
-        outtextxy(screenWidth / 2 - 25, screenHeight / 2 + 210, "Gun");
-
-        // Draw Cannon button with Cannon image
-        readimagefile("cannon.jpg", screenWidth / 2 - 100, screenHeight / 2 + 250, screenWidth / 2 + 100, screenHeight / 2 + 350);
-        outtextxy(screenWidth / 2 - 40, screenHeight / 2 + 360, "Cannon");
-
-        delay(100);
-    }
-
-    closegraph();
-
-    // Use the selected option here
-    if (option == 1)
-    {
-        std::cout << "Rifle selected" << std::endl;
-        // Add code for 1 player game with Rifle
-    }
-    else if (option == 2)
-    {
-        std::cout << "Gun selected" << std::endl;
-        // Add code for 2 player game with Gun
-    }
-    else if (option == 3)
-    {
-        std::cout << "Cannon selected" << std::endl;
-        // Add code for Cannon game
-    }
 }
 
 // Class Character
@@ -330,7 +349,7 @@ const int screenWidth = getmaxwidth();
 const int screenHeight = getmaxheight();
 const int fruitWidth = 200;
 const int fruitHeight = 50;
-const int fruitSpeed = 40;
+const int fruitSpeed = 30;
 const int numFruits = 10;
 
 class Fruit
@@ -350,8 +369,6 @@ public:
     virtual void draw() = 0;
     void setX(int xPos);
     void setY(int yPos);
-    int getWidth() const ;
-    int getHeight() const ;
 };
 
 class SmallFruit : public Fruit
@@ -386,14 +403,6 @@ Fruit::Fruit(int s, int sc) : size(s), score(sc)
 }
 
 Fruit::~Fruit() {}
-
-int Fruit::getWidth() const {
-    return fruitWidth ;
-}
-
-int Fruit::getHeight() const {
-    return fruitHeight ;
-}
 
 void Fruit::move()
 {
@@ -480,7 +489,6 @@ void BigFruit::draw()
     setfillstyle(SOLID_FILL, RED);
     fillellipse(x, y, size, size);
 }
-
 void initializeFruits(Fruit *fruits[])
 {
     for (int i = 0; i < numFruits; i++)
@@ -509,7 +517,6 @@ void deleteFruits(Fruit *fruits[])
     for (int i = 0; i < numFruits; i++)
         delete fruits[i];
 }
-
 // obstacle class
 class Obstacle
 {
@@ -592,7 +599,7 @@ private:
     Weapon *weapon; // Forward declaration allows using the pointer to Weapon
 
 public:
-    Bullet(int _x = 0, int _y = 0, int _size = 10, int _color = BLUE, int _speed = 100);
+    Bullet(int _x = 0, int _y = 0, int _size = 10, int _color = BLUE, int _speed = 10);
 
     int getY() const;
     bool getActive() const;
@@ -602,7 +609,6 @@ public:
     void undraw() const;
     void move();
     void reset();
-    bool checkCollision(const Fruit *fruit) const;
 };
 
 class Weapon
@@ -612,7 +618,7 @@ private:
     int width, height;
     int color;
     Bullet *bullets; // Use the pointer to Bullet
-    string imagePath;
+    std::string imagePath;
 
 public:
     Weapon(int _x = 0, int _y = 0, int _width = 150, int _height = 100, int _color = BLACK);
@@ -629,7 +635,7 @@ public:
     void doAction();
     int getPosition() const;
     void update();
-    void setImagePath(const string &path);
+    void setImagePath(const std::string &path);
 };
 
 // Implement the Bullet class methods
@@ -684,21 +690,6 @@ void Bullet::reset()
     x = weapon->getX() + weapon->getWidth() / 2;
     y = weapon->getY() - size;
     active = true;
-}
-
-bool Bullet::checkCollision(const Fruit *fruit) const
-{
-    int *xPos, *yPos ;
-    int fruitX = fruit->setX( xPos);
-    int fruitY = fruit->setY( yPos);
-    int fruitWidth = fruit->getWidth();
-    int fruitHeight = fruit->getHeight();
-
-    // Check if the bullet is within the bounds of the fruit
-    if (x >= fruitX && x <= fruitX + fruitWidth && y >= fruitY && y <= fruitY + fruitHeight)
-        return true;
-
-    return false;
 }
 
 // Implement the Weapon class methods
@@ -792,7 +783,7 @@ void Weapon::setImagePath(const std::string &path)
     imagePath = path;
 }
 
-/*int chooseWeaponPage()
+int chooseWeaponPage()
 {
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
@@ -817,47 +808,27 @@ void Weapon::setImagePath(const std::string &path)
 
     closegraph();
     return choice;
-}*/
+}
 
-/*bool checkCollision(Fruit* fruit, Bullet* bullet) {
-    int fruitLeft = fruit->setX() - fruitWidth / 2;
-    int fruitRight = fruit->setX() + fruitWidth / 2;
-    int fruitTop = fruit->setY() - fruitHeight / 2;
-    int fruitBottom = fruit->setY() + fruitHeight / 2;
+//aleysha
+class Score2{
+    protected:
+        int sc;
+        Character *character;
 
-    //int bulletLeft = bullet->setX() - bullet->getSize() / 2;
-    //int bulletRight = bullet->setX() + bullet->getSize() / 2;
-    int bulletTop = bullet->getY() - bullet->getSize() / 2;
-    int bulletBottom = bullet->getY() + bullet->getSize() / 2;
-
-    if (bulletBottom >= fruitTop && bulletTop <= fruitBottom) {
-        return true; // Collision detected
-    }
-
-    return false; // No collision
-}*/
-
-class Score
-{
-protected:
-    int sc;
-    Character *character;
-
-public:
-    Score() : sc(0), character(nullptr) {}
-    Score(Character *charPtr) : sc(0), character(charPtr) {}
-    // Score(int initialSc, Character *character) : character(initialSc), character(character) {}
-    Character *getCharacter() const { return character; }
-    void hitSmallFruit() { sc += 6; }
-    void hitMedFruit() { sc += 4; }
-    void hitBigFruit() { sc += 2; }
-    void hitObstacle() { sc -= 5; }
-    void setSc(int s) { sc = s; }
-    int getSc() const { return sc; }
+    public:
+        Score2() : sc(0), character(nullptr) {}
+       // Score(int initialSc, Character *character) : character(initialSc), character(character) {}
+        Character *getCharacter() const {return character;}
+        void hitSmallFruit() {sc += 6; }
+        void hitMedFruit() { sc += 4; }
+        void hitBigFruit() { sc += 2; }
+        void hitObstacle() { sc -= 5; }
+        void setSc(int s){sc = s;}
+        int getSc() const {return sc; }
 };
-// aleysha
-void displayDashboard(int score, int timeRemaining)
-{
+//aleysha
+void displayDashboard(int score, int timeRemaining){
     settextstyle(BOLD_FONT, HORIZ_DIR, 3);
     setcolor(BLACK);
 
@@ -869,7 +840,7 @@ void displayDashboard(int score, int timeRemaining)
     char timeRemainingStr[timeStr.length() + 1];
     strcpy(timeRemainingStr, timeStr.c_str());
 
-    // int leftX = 10;
+    //int leftX = 10;
     int centerX = getmaxx() / 2 - textwidth(scoreStr) / 2;
     int rightX = getmaxx() - textwidth(timeRemainingStr) - 10;
 
@@ -878,15 +849,12 @@ void displayDashboard(int score, int timeRemaining)
 }
 
 int main()
-{
-    srand(static_cast<unsigned>(time(nullptr)));
+{   
     int page = 0;
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
-    initwindow(screenWidth, screenHeight, "Aim and Fire");
+    initwindow(screenWidth, screenHeight, "Game Start");
     readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
-    void *imageBuffer = malloc(imagesize(0, 0, screenWidth, screenHeight));
-    getimage(0, 0, screenWidth, screenHeight, imageBuffer);
 
     // Start Page
     displayMenu();
@@ -896,15 +864,11 @@ int main()
     int choice = 1;
     // choice = chooseWeaponPage();
 
-    Character player;
-    Bullet bullet;
-    Score score(&player);
-
     // start weapon
     Weapon w1(screenWidth / 2, screenHeight - 230);
     Weapon w2(screenWidth / 2, screenHeight - 230);
 
-    string weaponImagePath;
+    std::string weaponImagePath;
     if (choice == 1)
     {
         // Rifle
@@ -930,7 +894,6 @@ int main()
 
     Fruit *fruits[numFruits];
     initializeFruits(fruits);
-
     // start boom
     int obstacleWidth = 100;  // Adjust with the actual width of your obstacle image
     int obstacleHeight = 100; // Adjust with the actual height of your obstacle image
@@ -958,12 +921,12 @@ int main()
         while (true)
         {
             // Clear the screen
-            // double buffering
-            setactivepage(page);
-            setvisualpage(1 - page);
+            //double buffering
+            setactivepage(page);           
+            setvisualpage(1-page);
 
             readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
-
+           
             // Move and draw the obstacles
             obstacle1.undrawObstacle();
             obstacle1.moveRight();
@@ -981,22 +944,6 @@ int main()
             {
                 fruits[i]->move();
                 fruits[i]->draw();
-
-                if (Bullet.checkCollision(fruits[i]))
-                {
-                    fruits[i]->setY(-100);
-                    fruits[i]->move() ;
-
-                    if (dynamic_cast<SmallFruit*>(fruits[i]) != nullptr) {
-                        score.hitSmallFruit() ;
-                    }
-                    else if (dynamic_cast<MediumFruit*>(fruits[i]) != nullptr) {
-                        score.hitMedFruit() ;
-                    }
-                    else if (dynamic_cast<BigFruit*>(fruits[i]) != nullptr) {
-                        score.hitBigFruit() ;
-                    }
-                }
             }
 
             // Move the weapon
@@ -1041,13 +988,27 @@ int main()
                         } */
 
             // Draw the character
-            player1.drawCharacter();
-
+            player1.drawCharacter();            
+            
             page = 1 - page;
             // Delay for smooth animation
             delay(100);
+                Score score;
 
-            // displayDashboard(score.getSc(), timeRemaining);
+    // Update the score with example values
+    score.updateScore(10, 0); // Marks gained: 10, Deduction: 0
+    score.updateScore(0, 4); // Marks gained: 0, Deduction: 4
+    score.updateScore(8, 2); // Marks gained: 8, Deduction: 2
+
+    // Display the scoreboard
+    score.drawScoreboard();
+
+    // Access and display the current score, high score, deduction count, and marks gained count
+    std::cout << "Current Score: " << score.getScore() << std::endl;
+    std::cout << "High Score: " << score.getHighScore() << std::endl;
+    std::cout << "Deduction Count: " << score.getDeductionCount() << std::endl;
+    std::cout << "Marks Gained Count: " << score.getMarksGainedCount() << std::endl;
+
         }
     }
     else if (gameMode == 2)
@@ -1063,22 +1024,16 @@ int main()
         while (true)
         {
             // Clear the screen
-            // double buffering
-
-            setactivepage(page2);
-            setvisualpage(1 - page2);
+            //double buffering
+            
+            setactivepage(page2);           
+            setvisualpage(1-page2);
 
             readimagefile("background.jpg", 0, 0, screenWidth, screenHeight);
             for (int i = 0; i < numFruits; i++)
             {
                 fruits[i]->move();
                 fruits[i]->draw();
-
-                if (bullet.getActive() && bullet.checkCollision(fruits[i]))
-                {
-                    fruits[i]->setY(-fruitHeight);
-                    bullet.reset();
-                }
             }
 
             // Move and draw the obstacles
@@ -1149,10 +1104,26 @@ int main()
 
             // Delay for smooth animation
             delay(100);
+                Score score;
+
+    // Update the score with example values
+    score.updateScore(10, 0); // Marks gained: 10, Deduction: 0
+    score.updateScore(0, 4); // Marks gained: 0, Deduction: 4
+    score.updateScore(8, 2); // Marks gained: 8, Deduction: 2
+
+    // Display the scoreboard
+    score.drawScoreboard();
+
+    // Access and display the current score, high score, deduction count, and marks gained count
+    std::cout << "Current Score: " << score.getScore() << std::endl;
+    std::cout << "High Score: " << score.getHighScore() << std::endl;
+    std::cout << "Deduction Count: " << score.getDeductionCount() << std::endl;
+    std::cout << "Marks Gained Count: " << score.getMarksGainedCount() << std::endl;
+
         }
     }
-    deleteFruits(fruits);
-    free(imageBuffer);
+    
+
     closegraph();
     return 0;
 }

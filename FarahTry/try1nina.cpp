@@ -140,9 +140,9 @@ public:
     void setPosition(int x);
     int getPosition() const;
     int getY() const;
-    virtual void drawCharacter() = 0;
-    virtual void moveLeft() = 0;
-    virtual void moveRight() = 0;
+    virtual void drawCharacter();
+    virtual void moveLeft();
+    virtual void moveRight();
 };
 
 Character::Character(const std::string &playerName, int playerPositionX, int playerPositionY)
@@ -688,9 +688,9 @@ void Bullet::reset()
 
 bool Bullet::checkCollision(const Fruit *fruit) const
 {
-    int *xPos, *yPos ;
-    int fruitX = fruit->setX( xPos);
-    int fruitY = fruit->setY( yPos);
+    int xPos=0, yPos=0;
+    int fruitX = fruit->setX(xPos);
+    int fruitY = fruit->setY(yPos);
     int fruitWidth = fruit->getWidth();
     int fruitHeight = fruit->getHeight();
 
