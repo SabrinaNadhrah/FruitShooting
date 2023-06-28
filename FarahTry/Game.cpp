@@ -43,7 +43,6 @@ void displayMenu()
     delay(200);
 }
 
-
 // Class Character
 class Character
 {
@@ -51,7 +50,8 @@ protected:
     string playerName;
     int positionX;
     int positionY;
-    int direction; // New member to store the character's movement direction (-1 for left, 1 for right)
+    // New member to store the character's movement direction (-1 for left, 1 for right)
+    int direction;
 
 public:
     Character(const std::string &playerName, int playerPositionX, int playerPositionY);
@@ -686,8 +686,6 @@ void Weapon::setImagePath(const std::string &path)
 {
     imagePath = path;
 }
-
-
 
 // aleysha
 class Score
