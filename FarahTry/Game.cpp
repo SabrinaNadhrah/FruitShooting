@@ -43,82 +43,6 @@ void displayMenu()
     delay(200);
 }
 
-void WeaponPage()
-{
-
-    int screenWidth = getmaxwidth();
-    int screenHeight = getmaxheight();
-
-    setbkcolor(BLACK);
-    cleardevice();
-
-    int option = 0;
-    int mouseX, mouseY;
-
-    while (true)
-    {
-        if (ismouseclick(WM_LBUTTONDOWN))
-        {
-            clearmouseclick(WM_LBUTTONDOWN);
-            mouseX = mousex();
-            mouseY = mousey();
-
-            if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 - 50 && mouseY <= screenHeight / 2 + 50)
-            {
-                option = 1; // 1 player selected
-                break;
-            }
-            else if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 + 100 && mouseY <= screenHeight / 2 + 200)
-            {
-                option = 2; // 2 players selected
-                break;
-            }
-            else if (mouseX >= screenWidth / 2 - 100 && mouseX <= screenWidth / 2 + 100 && mouseY >= screenHeight / 2 + 250 && mouseY <= screenHeight / 2 + 350)
-            {
-                option = 3; // Cannon selected
-                break;
-            }
-        }
-
-        setcolor(WHITE);
-        settextstyle(BOLD_FONT, HORIZ_DIR, 3);
-        outtextxy(screenWidth / 2 - 80, screenHeight / 2 - 100, "Choose Your Weapon!");
-        setfillstyle(SOLID_FILL, LIGHTGRAY);
-
-        // Draw 1 player button with Rifle image
-        readimagefile("rifflee.jpg", screenWidth / 2 - 100, screenHeight / 2 - 50, screenWidth / 2 + 100, screenHeight / 2 + 50);
-        outtextxy(screenWidth / 2 - 30, screenHeight / 2 + 60, "Rifle");
-
-        // Draw 2 players button with Gun image
-        readimagefile("gunn.jpg", screenWidth / 2 - 100, screenHeight / 2 + 100, screenWidth / 2 + 100, screenHeight / 2 + 200);
-        outtextxy(screenWidth / 2 - 25, screenHeight / 2 + 210, "Gun");
-
-        // Draw Cannon button with Cannon image
-        readimagefile("cannon.jpg", screenWidth / 2 - 100, screenHeight / 2 + 250, screenWidth / 2 + 100, screenHeight / 2 + 350);
-        outtextxy(screenWidth / 2 - 40, screenHeight / 2 + 360, "Cannon");
-
-        delay(100);
-    }
-
-    closegraph();
-
-    // Use the selected option here
-    if (option == 1)
-    {
-        std::cout << "Rifle selected" << std::endl;
-        // Add code for 1 player game with Rifle
-    }
-    else if (option == 2)
-    {
-        std::cout << "Gun selected" << std::endl;
-        // Add code for 2 player game with Gun
-    }
-    else if (option == 3)
-    {
-        std::cout << "Cannon selected" << std::endl;
-        // Add code for Cannon game
-    }
-}
 
 // Class Character
 class Character
@@ -763,32 +687,7 @@ void Weapon::setImagePath(const std::string &path)
     imagePath = path;
 }
 
-int chooseWeaponPage()
-{
-    int screenWidth = getmaxwidth();
-    int screenHeight = getmaxheight();
-    initwindow(screenWidth, screenHeight, "Choose Weapon");
 
-    // Display the available weapons and let the player choose
-    int choice = 1;
-    while (choice < 1 || choice > 3)
-    {
-        cleardevice();
-        outtextxy(screenWidth / 2 - 50, screenHeight / 2 - 30, "Choose a Weapon:");
-        outtextxy(screenWidth / 2 - 60, screenHeight / 2, "1. Rifle");
-        outtextxy(screenWidth / 2 - 60, screenHeight / 2 + 20, "2. Cannon");
-        outtextxy(screenWidth / 2 - 60, screenHeight / 2 + 40, "3. Gun");
-
-        char ch = getch();
-        if (ch >= '1' && ch <= '3')
-        {
-            choice = ch - '0';
-        }
-    }
-
-    closegraph();
-    return choice;
-}
 
 // aleysha
 class Score
