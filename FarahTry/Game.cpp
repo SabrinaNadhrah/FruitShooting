@@ -324,6 +324,7 @@ int selectMode()
 
     return mode;
 }
+
 // fruit
 const int screenWidth = getmaxwidth();
 const int screenHeight = getmaxheight();
@@ -497,6 +498,7 @@ void deleteFruits(Fruit *fruits[])
     for (int i = 0; i < numFruits; i++)
         delete fruits[i];
 }
+
 // obstacle class
 class Obstacle
 {
@@ -830,6 +832,7 @@ void displayDashboard(int score, int timeRemaining)
     outtextxy(rightX, 10, timeRemainingStr);
 }
 
+// aleysha 
 void drawGameOver()
 {
     settextstyle(BOLD_FONT, HORIZ_DIR, 4);
@@ -875,6 +878,7 @@ void runGameOverPage()
 
     closegraph();
 }
+
 int main()
 {
     int page = 0;

@@ -1,6 +1,8 @@
 
 #include <iostream>
 #include <string>
+#include <graphics.h>
+
 
 using namespace std;
 
@@ -809,13 +811,13 @@ int chooseWeaponPage()
 }
 
 //aleysha
-class Score{
+class Score2{
     protected:
         int sc;
         Character *character;
 
     public:
-        Score() : sc(0), character(nullptr) {}
+        Score2() : sc(0), character(nullptr) {}
        // Score(int initialSc, Character *character) : character(initialSc), character(character) {}
         Character *getCharacter() const {return character;}
         void hitSmallFruit() {sc += 6; }
